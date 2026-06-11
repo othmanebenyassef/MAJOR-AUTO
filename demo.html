@@ -5,61 +5,75 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MAJOR AUTO — Gestion Garage</title>
 <style>
-  body { font-family: Inter, system-ui, sans-serif; background:#f8f9fc; }
-  .sidebar { width:256px; min-height:100vh; background:#fff; border-right:1px solid #e8eaf0; position:fixed; top:0; left:0; z-index:40; display:flex; flex-direction:column; }
-  .main { margin-left:256px; min-height:100vh; display:flex; flex-direction:column; }
-  .page { display:none; }
-  .page.active { display:flex; flex-direction:column; flex:1; }
-  .nav-item { display:flex; align-items:center; gap:12px; padding:9px 12px; border-radius:12px; font-size:14px; font-weight:500; cursor:pointer; transition:all .15s; color:#6b7280; }
-  .nav-item:hover { background:#f8f9fc; color:#1e2433; }
-  .nav-item.active { background:#eef3ff; color:#3b82f6; }
-  .nav-group { margin-left:12px; padding-left:16px; border-left:2px solid #e8eaf0; margin-top:2px; }
-  .sub-item { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:10px; font-size:13px; cursor:pointer; transition:all .15s; color:#6b7280; }
-  .sub-item:hover { background:#f8f9fc; color:#1e2433; }
-  .sub-item.active { background:#eef3ff; color:#3b82f6; font-weight:500; }
-  .badge { display:inline-flex; align-items:center; border-radius:9999px; padding:2px 10px; font-size:12px; font-weight:500; }
-  .badge-warning { background:#fffbeb; color:#d97706; border:1px solid #fcd34d; }
-  .badge-info { background:#eef3ff; color:#3b82f6; border:1px solid #c7d7fd; }
-  .badge-success { background:#edfaf4; color:#059669; border:1px solid #a7f0c8; }
-  .badge-danger { background:#fff1f3; color:#e11d48; border:1px solid #fda4b0; }
-  .badge-default { background:#f8f9fc; color:#6b7280; border:1px solid #e8eaf0; }
-  .badge-purple { background:#f5f3ff; color:#7c3aed; border:1px solid #c4b5fd; }
-  .card { background:#fff; border-radius:16px; border:1px solid #e8eaf0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
-  .btn { display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:12px; font-size:14px; font-weight:500; cursor:pointer; border:none; transition:all .15s; }
-  .btn-primary { background:#3b82f6; color:#fff; box-shadow:0 1px 4px rgba(59,130,246,.2); }
-  .btn-primary:hover { background:#2563eb; }
-  .btn-outline { background:#fff; color:#374151; border:1px solid #e8eaf0; }
-  .btn-outline:hover { background:#f8f9fc; }
-  .kpi-card { background:#fff; border-radius:16px; border:1px solid #e8eaf0; padding:20px; }
-  thead tr th { font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:.05em; padding:12px 24px; text-align:left; border-bottom:1px solid #f0f2f7; }
-  tbody tr td { padding:14px 24px; font-size:14px; border-bottom:1px solid #f0f2f7; }
-  tbody tr:hover { background:#f8f9fc; }
-  tbody tr:last-child td { border-bottom:none; }
-  .header { background:#fff; border-bottom:1px solid #e8eaf0; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:30; }
-  .submenu { display:none; }
-  .submenu.open { display:block; }
-  .chevron { transition:transform .2s; }
-  .chevron.open { transform:rotate(90deg); }
-  input[type=text], input[type=number], input[type=date], select, textarea {
-    width:100%; padding:10px 12px; background:#f8f9fc; border:1px solid #e8eaf0; border-radius:12px;
-    font-size:14px; color:#1e2433; outline:none; transition:all .15s;
-  }
-  input:focus, select:focus, textarea:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.1); }
-  label { font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:4px; }
-  .notification { position:fixed; bottom:24px; right:24px; background:#1e2433; color:#fff; padding:12px 20px; border-radius:12px; font-size:14px; z-index:100; display:none; box-shadow:0 4px 12px rgba(0,0,0,.15); }
-  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:50; align-items:center; justify-content:center; }
-  .modal-bg.open { display:flex; }
-  .modal { background:#fff; border-radius:20px; padding:0; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.15); }
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family: Inter, system-ui, sans-serif; background:#f8f9fc; color:#1e2433; }
+.sidebar { width:256px; min-height:100vh; background:#fff; border-right:1px solid #e8eaf0; position:fixed; top:0; left:0; z-index:40; display:flex; flex-direction:column; }
+.main { margin-left:256px; min-height:100vh; display:flex; flex-direction:column; }
+.page { display:none; flex-direction:column; flex:1; }
+.page.active { display:flex; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:12px; font-size:14px; font-weight:500; cursor:pointer; transition:all .15s; color:#6b7280; }
+.nav-item:hover { background:#f8f9fc; color:#1e2433; }
+.nav-item.active { background:#eef3ff; color:#3b82f6; }
+.nav-group { margin-left:12px; padding-left:16px; border-left:2px solid #e8eaf0; margin-top:2px; }
+.sub-item { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:10px; font-size:13px; cursor:pointer; transition:all .15s; color:#6b7280; }
+.sub-item:hover { background:#f8f9fc; color:#1e2433; }
+.sub-item.active { background:#eef3ff; color:#3b82f6; font-weight:500; }
+.badge { display:inline-flex; align-items:center; border-radius:9999px; padding:2px 10px; font-size:12px; font-weight:500; }
+.badge-warning { background:#fffbeb; color:#d97706; border:1px solid #fcd34d; }
+.badge-info { background:#eef3ff; color:#3b82f6; border:1px solid #c7d7fd; }
+.badge-success { background:#edfaf4; color:#059669; border:1px solid #a7f0c8; }
+.badge-danger { background:#fff1f3; color:#e11d48; border:1px solid #fda4b0; }
+.badge-default { background:#f8f9fc; color:#6b7280; border:1px solid #e8eaf0; }
+.badge-purple { background:#f5f3ff; color:#7c3aed; border:1px solid #c4b5fd; }
+.card { background:#fff; border-radius:16px; border:1px solid #e8eaf0; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:12px; font-size:14px; font-weight:500; cursor:pointer; border:none; transition:all .15s; }
+.btn-primary { background:#3b82f6; color:#fff; box-shadow:0 1px 4px rgba(59,130,246,.2); }
+.btn-primary:hover { background:#2563eb; }
+.btn-outline { background:#fff; color:#374151; border:1px solid #e8eaf0; }
+.btn-outline:hover { background:#f8f9fc; }
+.btn-ghost { background:none; border:none; color:#9ca3af; cursor:pointer; padding:6px; border-radius:8px; }
+.btn-ghost:hover { background:#f8f9fc; color:#f43f5e; }
+.kpi-card { background:#fff; border-radius:16px; border:1px solid #e8eaf0; padding:20px; }
+thead tr th { font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:.05em; padding:12px 20px; text-align:left; border-bottom:1px solid #f0f2f7; }
+tbody tr td { padding:13px 20px; font-size:14px; border-bottom:1px solid #f0f2f7; }
+tbody tr:hover { background:#f8f9fc; }
+tbody tr:last-child td { border-bottom:none; }
+.header { background:#fff; border-bottom:1px solid #e8eaf0; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:30; }
+.submenu { display:none; }
+.submenu.open { display:block; }
+.chevron { transition:transform .2s; }
+.chevron.open { transform:rotate(90deg); }
+input, select, textarea { width:100%; padding:10px 14px; background:#fff; border:1px solid #e8eaf0; border-radius:10px; font-size:14px; color:#1e2433; outline:none; transition:border-color .15s; font-family:inherit; }
+input:focus, select:focus, textarea:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.08); }
+.field-label { font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px; }
+.field-group { display:flex; flex-direction:column; margin-bottom:22px; }
+.form-card { background:#fff; border-radius:16px; border:1px solid #e8eaf0; padding:32px; max-width:740px; }
+.notification { position:fixed; bottom:24px; right:24px; background:#1e2433; color:#fff; padding:12px 20px; border-radius:12px; font-size:14px; z-index:100; display:none; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+.list-view { display:flex; flex-direction:column; flex:1; }
+.form-view { display:none; flex-direction:column; flex:1; padding:24px; }
+.form-view.open { display:flex; }
+.list-view.hidden { display:none; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+/* journal lines table */
+.jlines { width:100%; border-collapse:collapse; }
+.jlines th { font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; padding:8px 10px; border-bottom:1px solid #e8eaf0; text-align:left; }
+.jlines td { padding:6px 6px; }
+.jlines td input, .jlines td select { padding:7px 10px; font-size:13px; }
+/* expandable dossier rows */
+.dossier-row { cursor:pointer; }
+.dossier-detail { display:none; background:#f8f9fc; }
+.dossier-detail.open { display:table-row; }
 </style>
 </head>
 <body>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <div class="sidebar">
-  <div style="padding:20px 20px 16px; border-bottom:1px solid #e8eaf0;">
+  <div style="padding:20px 20px 16px;border-bottom:1px solid #e8eaf0;">
     <div style="display:flex;align-items:center;gap:12px;">
       <div style="width:36px;height:36px;background:#eef3ff;border-radius:12px;display:flex;align-items:center;justify-content:center;">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
       </div>
       <div>
         <p style="font-weight:700;font-size:14px;color:#1e2433;line-height:1.2;">MAJOR AUTO</p>
@@ -67,57 +81,61 @@
       </div>
     </div>
   </div>
-  <nav style="flex:1;padding:16px 12px;overflow-y:auto;">
+  <nav style="flex:1;padding:12px;overflow-y:auto;">
     <div class="nav-item active" onclick="showPage('dashboard')">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Tableau de bord
     </div>
     <div class="nav-item" onclick="showPage('journal')">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
       Journal
     </div>
     <div class="nav-item" onclick="showPage('charges')">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/><polyline points="16,7 22,7 22,13"/></svg>
       Charges d'exploitation
     </div>
+    <div class="nav-item" onclick="showPage('dossiers')">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      Dossiers véhicules
+    </div>
     <div class="nav-item" onclick="showPage('livraisons')">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16,8 20,8 23,11 23,16 16,16 16,8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       Livraisons
     </div>
     <!-- Documents -->
-    <div class="nav-item" onclick="toggleMenu('menuDocs',this)" style="justify-content:space-between;">
-      <span style="display:flex;align-items:center;gap:12px;">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    <div class="nav-item" onclick="toggleMenu('menuDocs','chevronDocs')" style="justify-content:space-between;">
+      <span style="display:flex;align-items:center;gap:10px;">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         Documents
       </span>
       <svg class="chevron" id="chevronDocs" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
     </div>
     <div class="nav-group submenu" id="menuDocs">
-      <div class="sub-item" onclick="showPage('pv')">📋 Procès-verbal</div>
-      <div class="sub-item" onclick="showPage('devis')">📄 Devis</div>
-      <div class="sub-item active" onclick="showPage('ordres')">🔧 Ordres de réparation</div>
-      <div class="sub-item" onclick="showPage('bons_commande')">🛒 Bons de commande</div>
-      <div class="sub-item" onclick="showPage('bons_livraison')">📦 Bons de livraison</div>
-      <div class="sub-item" onclick="showPage('factures')">🧾 Factures</div>
-      <div class="sub-item" onclick="showPage('fiches')">🔩 Fiches techniques</div>
-      <div class="sub-item" onclick="showPage('attestations')">🛡 Attestations</div>
+      <div class="sub-item" onclick="showPage('pv')">Proces-verbal</div>
+      <div class="sub-item" onclick="showPage('devis')">Devis</div>
+      <div class="sub-item" onclick="showPage('ordres')">Ordres de reparation</div>
+      <div class="sub-item" onclick="showPage('bons_commande')">Bons de commande</div>
+      <div class="sub-item" onclick="showPage('bons_livraison')">Bons de livraison</div>
+      <div class="sub-item" onclick="showPage('factures')">Factures</div>
+      <div class="sub-item" onclick="showPage('fiches')">Fiches techniques</div>
+      <div class="sub-item" onclick="showPage('attestations')">Attestations</div>
     </div>
-    <!-- Base de données -->
-    <div class="nav-item" onclick="toggleMenu('menuBase',this)" style="justify-content:space-between;">
-      <span style="display:flex;align-items:center;gap:12px;">
+    <!-- Base de donnees -->
+    <div class="nav-item" onclick="toggleMenu('menuBase','chevronBase')" style="justify-content:space-between;">
+      <span style="display:flex;align-items:center;gap:10px;">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-        Base de données
+        Base de donnees
       </span>
       <svg class="chevron" id="chevronBase" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
     </div>
     <div class="nav-group submenu" id="menuBase">
-      <div class="sub-item" onclick="showPage('clients')">👥 Clients</div>
-      <div class="sub-item" onclick="showPage('vehicules')">🚗 Véhicules</div>
-      <div class="sub-item" onclick="showPage('personnel')">👤 Personnel</div>
-      <div class="sub-item" onclick="showPage('stock')">📦 Stock pièces & fournitures</div>
-      <div class="sub-item" onclick="showPage('fournisseurs')">🏢 Fournisseurs</div>
-      <div class="sub-item" onclick="showPage('bureaux')">📊 Bureaux d'expertises</div>
-      <div class="sub-item" onclick="showPage('partenaires')">🤝 Partenaires</div>
+      <div class="sub-item" onclick="showPage('clients')">Clients</div>
+      <div class="sub-item" onclick="showPage('vehicules')">Vehicules</div>
+      <div class="sub-item" onclick="showPage('personnel')">Personnel</div>
+      <div class="sub-item" onclick="showPage('stock')">Stock pieces</div>
+      <div class="sub-item" onclick="showPage('fournisseurs')">Fournisseurs</div>
+      <div class="sub-item" onclick="showPage('bureaux')">Bureaux expertises</div>
+      <div class="sub-item" onclick="showPage('partenaires')">Partenaires</div>
     </div>
   </nav>
   <div style="padding:16px;border-top:1px solid #e8eaf0;">
@@ -133,840 +151,816 @@
   </div>
 </div>
 
-<!-- Main -->
+<!-- MAIN -->
 <div class="main">
 
-<!-- DASHBOARD -->
+<!-- ═══════════════════════════════════════════════════ DASHBOARD -->
 <div id="page-dashboard" class="page active">
   <div class="header">
     <div>
-      <h1 style="font-size:18px;font-weight:700;color:#1e2433;">Tableau de bord</h1>
+      <h1 style="font-size:18px;font-weight:700;">Tableau de bord</h1>
       <p style="font-size:13px;color:#9ca3af;margin-top:2px;" id="todayDate"></p>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <button class="btn btn-primary" onclick="showModal('modalOrdre')">+ Nouvel ordre</button>
-    </div>
+    <button class="btn btn-primary" onclick="showForm('ordres')">+ Nouvel ordre</button>
   </div>
   <div style="flex:1;padding:24px;">
     <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:24px;">
-      <div class="kpi-card">
-        <div style="width:36px;height:36px;background:#eef3ff;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
-        </div>
-        <p style="font-size:24px;font-weight:700;color:#1e2433;" id="kpi-ca">0 MAD</p>
-        <p style="font-size:12px;color:#9ca3af;margin-top:4px;">C.A. ce mois</p>
-      </div>
-      <div class="kpi-card">
-        <div style="width:36px;height:36px;background:#edfaf4;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#10b981" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-        </div>
-        <p style="font-size:24px;font-weight:700;color:#1e2433;" id="kpi-clients">0</p>
-        <p style="font-size:12px;color:#9ca3af;margin-top:4px;">Clients</p>
-      </div>
-      <div class="kpi-card">
-        <div style="width:36px;height:36px;background:#f5f3ff;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#8b5cf6" stroke-width="2"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="16" r="1"/></svg>
-        </div>
-        <p style="font-size:24px;font-weight:700;color:#1e2433;" id="kpi-vehicules">0</p>
-        <p style="font-size:12px;color:#9ca3af;margin-top:4px;">Véhicules</p>
-      </div>
-      <div class="kpi-card">
-        <div style="width:36px;height:36px;background:#fffbeb;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#f59e0b" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-        </div>
-        <p style="font-size:24px;font-weight:700;color:#1e2433;" id="kpi-encours">0</p>
-        <p style="font-size:12px;color:#9ca3af;margin-top:4px;">En cours</p>
-      </div>
-      <div class="kpi-card">
-        <div style="width:36px;height:36px;background:#f0fdfa;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#14b8a6" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
-        </div>
-        <p style="font-size:24px;font-weight:700;color:#1e2433;" id="kpi-attente">0</p>
-        <p style="font-size:12px;color:#9ca3af;margin-top:4px;">En attente</p>
-      </div>
-      <div class="kpi-card">
-        <div style="width:36px;height:36px;background:#fff1f3;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#f43f5e" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        </div>
-        <p style="font-size:24px;font-weight:700;color:#1e2433;" id="kpi-impaye">0</p>
-        <p style="font-size:12px;color:#9ca3af;margin-top:4px;">Factures impayées</p>
-      </div>
+      <div class="kpi-card"><div style="width:36px;height:36px;background:#eef3ff;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg></div><p style="font-size:22px;font-weight:700;" id="kpi-ca">0 MAD</p><p style="font-size:12px;color:#9ca3af;margin-top:4px;">C.A. ce mois</p></div>
+      <div class="kpi-card"><div style="width:36px;height:36px;background:#edfaf4;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#10b981" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><p style="font-size:22px;font-weight:700;" id="kpi-clients">0</p><p style="font-size:12px;color:#9ca3af;margin-top:4px;">Clients</p></div>
+      <div class="kpi-card"><div style="width:36px;height:36px;background:#f5f3ff;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#8b5cf6" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16,8 20,8 23,11 23,16 16,16 16,8"/></svg></div><p style="font-size:22px;font-weight:700;" id="kpi-vehicules">0</p><p style="font-size:12px;color:#9ca3af;margin-top:4px;">Vehicules</p></div>
+      <div class="kpi-card"><div style="width:36px;height:36px;background:#fffbeb;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div><p style="font-size:22px;font-weight:700;" id="kpi-encours">0</p><p style="font-size:12px;color:#9ca3af;margin-top:4px;">En cours</p></div>
+      <div class="kpi-card"><div style="width:36px;height:36px;background:#f0fdfa;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#14b8a6" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div><p style="font-size:22px;font-weight:700;" id="kpi-attente">0</p><p style="font-size:12px;color:#9ca3af;margin-top:4px;">En attente</p></div>
+      <div class="kpi-card"><div style="width:36px;height:36px;background:#fff1f3;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#f43f5e" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><p style="font-size:22px;font-weight:700;" id="kpi-impaye">0</p><p style="font-size:12px;color:#9ca3af;margin-top:4px;">Fact. impayees</p></div>
     </div>
     <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;">
       <div class="card">
-        <div style="padding:16px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-          <h3 style="font-size:14px;font-weight:600;color:#1e2433;">Ordres récents</h3>
-          <span onclick="showPage('ordres')" style="font-size:12px;color:#3b82f6;cursor:pointer;">Voir tout →</span>
-        </div>
-        <div id="dash-ordres" style="padding:0;"></div>
+        <div style="padding:16px 20px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;"><h3 style="font-size:14px;font-weight:600;">Ordres recents</h3><span onclick="showPage('ordres')" style="font-size:12px;color:#3b82f6;cursor:pointer;">Voir tout</span></div>
+        <div id="dash-ordres"></div>
       </div>
       <div class="card">
-        <div style="padding:16px 24px;border-bottom:1px solid #f0f2f7;"><h3 style="font-size:14px;font-weight:600;color:#1e2433;">Actions rapides</h3></div>
+        <div style="padding:16px 20px;border-bottom:1px solid #f0f2f7;"><h3 style="font-size:14px;font-weight:600;">Actions rapides</h3></div>
         <div style="padding:16px;display:flex;flex-direction:column;gap:8px;">
-          <div onclick="showModal('modalOrdre')" style="display:flex;align-items:center;gap:12px;padding:12px;background:#eef3ff;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#3b82f6;">→ Nouvel ordre de réparation</div>
-          <div onclick="showModal('modalClient')" style="display:flex;align-items:center;gap:12px;padding:12px;background:#edfaf4;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#10b981;">→ Nouveau client</div>
-          <div onclick="showModal('modalFacture')" style="display:flex;align-items:center;gap:12px;padding:12px;background:#fffbeb;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#f59e0b;">→ Nouvelle facture</div>
-          <div onclick="showModal('modalJournal')" style="display:flex;align-items:center;gap:12px;padding:12px;background:#fff1f3;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#f43f5e;">→ Entrée/sortie caisse</div>
-          <div onclick="showPage('stock')" style="display:flex;align-items:center;gap:12px;padding:12px;background:#f5f3ff;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#8b5cf6;">→ Gestion du stock</div>
+          <div onclick="showPage('ordres');showForm('ordres')" style="padding:12px;background:#eef3ff;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#3b82f6;">+ Nouvel ordre de reparation</div>
+          <div onclick="showPage('clients');showForm('clients')" style="padding:12px;background:#edfaf4;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#10b981;">+ Nouveau client</div>
+          <div onclick="showPage('factures');showForm('factures')" style="padding:12px;background:#fffbeb;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#f59e0b;">+ Nouvelle facture</div>
+          <div onclick="showPage('journal');showForm('journal')" style="padding:12px;background:#fff1f3;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#f43f5e;">+ Entree/sortie caisse</div>
+          <div onclick="showPage('stock')" style="padding:12px;background:#f5f3ff;border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#8b5cf6;">Gestion du stock</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- CLIENTS -->
+<!-- ═══════════════════════════════════════════════════ CLIENTS -->
 <div id="page-clients" class="page">
-  <div class="header">
-    <div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Clients</h1><p style="font-size:13px;color:#9ca3af;" id="sub-clients"></p></div>
-    <button class="btn btn-primary" onclick="showModal('modalClient')">+ Nouveau client</button>
+  <div class="list-view" id="lv-clients">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Clients</h1><p style="font-size:13px;color:#9ca3af;" id="sub-clients"></p></div><button class="btn btn-primary" onclick="showForm('clients')">+ Nouveau client</button></div>
+    <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;"><thead><tr><th>Nom</th><th>Telephone</th><th>Email</th><th>Ville</th><th>Vehicules</th><th>Depuis</th></tr></thead><tbody id="tbl-clients"></tbody></table></div></div>
   </div>
-  <div style="flex:1;padding:24px;">
-    <div class="card"><table style="width:100%;">
-      <thead><tr><th>Nom</th><th>Téléphone</th><th>Email</th><th>Ville</th><th>Véhicules</th><th>Depuis</th></tr></thead>
-      <tbody id="tbl-clients"></tbody>
-    </table></div>
-  </div>
-</div>
-
-<!-- VEHICULES -->
-<div id="page-vehicules" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Véhicules</h1><p style="font-size:13px;color:#9ca3af;" id="sub-vehicules"></p></div>
-    <button class="btn btn-primary" onclick="showModal('modalVehicule')">+ Nouveau véhicule</button>
-  </div>
-  <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;">
-    <thead><tr><th>Immatriculation</th><th>Marque / Modèle</th><th>Année</th><th>Carburant</th><th>Propriétaire</th><th>Interventions</th></tr></thead>
-    <tbody id="tbl-vehicules"></tbody>
-  </table></div></div>
-</div>
-
-<!-- ORDRES -->
-<div id="page-ordres" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Ordres de réparation</h1><p style="font-size:13px;color:#9ca3af;" id="sub-ordres"></p></div>
-    <button class="btn btn-primary" onclick="showModal('modalOrdre')">+ Nouvel ordre</button>
-  </div>
-  <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;">
-    <thead><tr><th>Numéro</th><th>Client</th><th>Véhicule</th><th>Services</th><th>Technicien</th><th>Entrée</th><th>Statut</th></tr></thead>
-    <tbody id="tbl-ordres"></tbody>
-  </table></div></div>
-</div>
-
-<!-- FACTURES -->
-<div id="page-factures" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Factures</h1><p style="font-size:13px;color:#9ca3af;" id="sub-factures"></p></div>
-    <button class="btn btn-primary" onclick="showModal('modalFacture')">+ Nouvelle facture</button>
-  </div>
-  <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;">
-    <thead><tr><th>Numéro</th><th>Client</th><th>Date</th><th>Montant TTC</th><th>Statut</th></tr></thead>
-    <tbody id="tbl-factures"></tbody>
-  </table></div></div>
-</div>
-
-<!-- DEVIS -->
-<div id="page-devis" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Devis</h1></div>
-    <button class="btn btn-primary" onclick="showModal('modalDevis')">+ Nouveau devis</button>
-  </div>
-  <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;">
-    <thead><tr><th>Numéro</th><th>Client</th><th>Véhicule</th><th>Date</th><th>Montant TTC</th><th>Statut</th></tr></thead>
-    <tbody id="tbl-devis"></tbody>
-  </table></div></div>
-</div>
-
-<!-- STOCK -->
-<div id="page-stock" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Stock pièces & fournitures</h1><p style="font-size:13px;color:#9ca3af;" id="sub-stock"></p></div>
-    <button class="btn btn-primary" onclick="showModal('modalPiece')">+ Nouvelle pièce</button>
-  </div>
-  <div style="flex:1;padding:24px;"><div id="stock-alerte" style="display:none;margin-bottom:16px;padding:12px 16px;background:#fff1f3;border:1px solid #fda4b0;border-radius:12px;font-size:14px;color:#e11d48;"></div>
-  <div class="card"><table style="width:100%;">
-    <thead><tr><th>Référence</th><th>Désignation</th><th>Fournisseur</th><th>Stock</th><th>Seuil</th><th>P. Achat</th><th>P. Vente</th><th>État</th></tr></thead>
-    <tbody id="tbl-stock"></tbody>
-  </table></div></div>
-</div>
-
-<!-- JOURNAL -->
-<div id="page-journal" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Journal</h1><p style="font-size:13px;color:#9ca3af;">Entrées et sorties de caisses et banques</p></div>
-    <button class="btn btn-primary" onclick="showModal('modalJournal')">+ Nouvelle opération</button>
-  </div>
-  <div style="flex:1;padding:24px;">
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
-      <div class="kpi-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><div style="width:36px;height:36px;background:#edfaf4;border-radius:12px;display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#10b981" stroke-width="2"><polyline points="12,19 12,5"/><polyline points="5,12 12,5 19,12"/></svg></div><span style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Total Entrées</span></div><p style="font-size:24px;font-weight:700;color:#10b981;" id="j-entrees">0 MAD</p></div>
-      <div class="kpi-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><div style="width:36px;height:36px;background:#fff1f3;border-radius:12px;display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#f43f5e" stroke-width="2"><polyline points="12,5 12,19"/><polyline points="19,12 12,19 5,12"/></svg></div><span style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Total Sorties</span></div><p style="font-size:24px;font-weight:700;color:#f43f5e;" id="j-sorties">0 MAD</p></div>
-      <div class="kpi-card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"><div style="width:36px;height:36px;background:#eef3ff;border-radius:12px;display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div><span style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Solde</span></div><p style="font-size:24px;font-weight:700;color:#3b82f6;" id="j-solde">0 MAD</p></div>
+  <div class="form-view" id="fv-clients">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('clients')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouveau client</h2>
+      <div class="grid2"><div class="field-group"><label class="field-label">Prenom *</label><input type="text" id="c-prenom" placeholder="Mohamed"/></div><div class="field-group"><label class="field-label">Nom *</label><input type="text" id="c-nom" placeholder="Alami"/></div></div>
+      <div class="field-group"><label class="field-label">Telephone *</label><input type="text" id="c-tel" placeholder="0661234567"/></div>
+      <div class="field-group"><label class="field-label">Email</label><input type="text" id="c-email" placeholder="exemple@email.com"/></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Adresse</label><input type="text" id="c-adresse" placeholder="Rue, Quartier"/></div><div class="field-group"><label class="field-label">Ville</label><input type="text" id="c-ville" placeholder="Casablanca"/></div></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="saveClient()">Enregistrer</button><button class="btn btn-outline" onclick="hideForm('clients')">Annuler</button></div>
     </div>
-    <div class="card"><table style="width:100%;">
-      <thead><tr><th>Date</th><th>Type</th><th>Compte</th><th>Catégorie</th><th>Libellé</th><th>Référence</th><th style="text-align:right;">Montant</th></tr></thead>
-      <tbody id="tbl-journal"></tbody>
-    </table></div>
   </div>
 </div>
 
-<!-- CHARGES -->
+<!-- ═══════════════════════════════════════════════════ VEHICULES -->
+<div id="page-vehicules" class="page">
+  <div class="list-view" id="lv-vehicules">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Vehicules</h1><p style="font-size:13px;color:#9ca3af;" id="sub-vehicules"></p></div><button class="btn btn-primary" onclick="showForm('vehicules')">+ Nouveau vehicule</button></div>
+    <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;"><thead><tr><th>Immatriculation</th><th>Marque / Modele</th><th>Annee</th><th>Carburant</th><th>Proprietaire</th><th>Interventions</th></tr></thead><tbody id="tbl-vehicules"></tbody></table></div></div>
+  </div>
+  <div class="form-view" id="fv-vehicules">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('vehicules')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouveau vehicule</h2>
+      <div class="field-group"><label class="field-label">Client proprietaire *</label><select id="v-client"><option value="">Selectionner...</option></select></div>
+      <div class="field-group"><label class="field-label">Immatriculation *</label><input type="text" id="v-immat" placeholder="12345-A-1"/></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Marque *</label><input type="text" id="v-marque" placeholder="Toyota"/></div><div class="field-group"><label class="field-label">Modele *</label><input type="text" id="v-modele" placeholder="Corolla"/></div></div>
+      <div class="grid3"><div class="field-group"><label class="field-label">Annee</label><input type="number" id="v-annee" value="2020"/></div><div class="field-group"><label class="field-label">Couleur</label><input type="text" id="v-couleur" placeholder="Blanc"/></div><div class="field-group"><label class="field-label">Carburant</label><select id="v-carburant"><option>Essence</option><option>Diesel</option><option>Hybride</option><option>Electrique</option></select></div></div>
+      <div class="field-group"><label class="field-label">Kilometrage</label><input type="number" id="v-km" placeholder="0"/></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="saveVehicule()">Enregistrer</button><button class="btn btn-outline" onclick="hideForm('vehicules')">Annuler</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ ORDRES -->
+<div id="page-ordres" class="page">
+  <div class="list-view" id="lv-ordres">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Ordres de reparation</h1><p style="font-size:13px;color:#9ca3af;" id="sub-ordres"></p></div><button class="btn btn-primary" onclick="showForm('ordres')">+ Nouvel ordre</button></div>
+    <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;"><thead><tr><th>Numero</th><th>Vehicule</th><th>Services</th><th>Technicien</th><th>Entree</th><th>Statut</th></tr></thead><tbody id="tbl-ordres"></tbody></table></div></div>
+  </div>
+  <div class="form-view" id="fv-ordres">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('ordres')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouvel ordre de reparation</h2>
+      <div class="field-group"><label class="field-label">Vehicule (immatriculation)</label><input type="text" id="o-vehicule" placeholder="ex: 54321-B-2"/></div>
+      <div class="field-group"><label class="field-label">Services</label><div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;" id="services-btns"></div></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Technicien</label><input type="text" id="o-tech" placeholder="Nom du technicien"/></div><div class="field-group"><label class="field-label">Kilometrage</label><input type="number" id="o-km" placeholder="120000"/></div></div>
+      <div class="field-group"><label class="field-label">Description des travaux</label><textarea id="o-desc" rows="4" placeholder="Travaux a effectuer..."></textarea></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="saveOrdre()">Creer l ordre</button><button class="btn btn-outline" onclick="hideForm('ordres')">Annuler</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ FACTURES -->
+<div id="page-factures" class="page">
+  <div class="list-view" id="lv-factures">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Factures</h1><p style="font-size:13px;color:#9ca3af;" id="sub-factures"></p></div><button class="btn btn-primary" onclick="showForm('factures')">+ Nouvelle facture</button></div>
+    <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;"><thead><tr><th>Numero</th><th>Client</th><th>Date</th><th>Montant TTC</th><th>Statut</th></tr></thead><tbody id="tbl-factures"></tbody></table></div></div>
+  </div>
+  <div class="form-view" id="fv-factures">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('factures')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouvelle facture</h2>
+      <div class="field-group"><label class="field-label">Client *</label><select id="f-client"><option value="">Selectionner...</option></select></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Montant HT (MAD) *</label><input type="number" id="f-ht" placeholder="1000" oninput="calcTTC()"/></div><div class="field-group"><label class="field-label">TVA (%)</label><input type="number" id="f-tva" value="20" oninput="calcTTC()"/></div></div>
+      <div class="field-group"><label class="field-label">Montant TTC (calcule)</label><input type="text" id="f-ttc" readonly style="background:#f8f9fc;"/></div>
+      <div class="field-group"><label class="field-label">Notes</label><textarea id="f-notes" rows="3" placeholder="Observations..."></textarea></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="saveFacture()">Creer la facture</button><button class="btn btn-outline" onclick="hideForm('factures')">Annuler</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ DEVIS -->
+<div id="page-devis" class="page">
+  <div class="list-view" id="lv-devis">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Devis</h1></div><button class="btn btn-primary" onclick="showForm('devis')">+ Nouveau devis</button></div>
+    <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;"><thead><tr><th>Numero</th><th>Client</th><th>Vehicule</th><th>Date</th><th>Montant TTC</th><th>Statut</th></tr></thead><tbody id="tbl-devis"></tbody></table></div></div>
+  </div>
+  <div class="form-view" id="fv-devis">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('devis')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouveau devis</h2>
+      <div class="field-group"><label class="field-label">Client *</label><select id="dev-client"><option value="">Selectionner...</option></select></div>
+      <div class="field-group"><label class="field-label">Vehicule</label><input type="text" id="dev-vehicule" placeholder="Marque Modele — Immatriculation"/></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Montant HT (MAD)</label><input type="number" id="dev-ht" placeholder="0.00" oninput="calcDevTTC()"/></div><div class="field-group"><label class="field-label">Validite (jours)</label><input type="number" id="dev-val" value="30"/></div></div>
+      <div class="field-group"><label class="field-label">Montant TTC (calcule)</label><input type="text" id="dev-ttc" readonly style="background:#f8f9fc;"/></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="saveDevis()">Creer le devis</button><button class="btn btn-outline" onclick="hideForm('devis')">Annuler</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ JOURNAL -->
+<div id="page-journal" class="page">
+  <div class="list-view" id="lv-journal">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Journal de tresorerie</h1><p style="font-size:13px;color:#9ca3af;">Caisse et Banque</p></div><button class="btn btn-primary" onclick="showForm('journal')">+ Nouvelle saisie</button></div>
+    <div style="flex:1;padding:24px;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
+        <div class="kpi-card"><p style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Solde Caisse</p><p style="font-size:26px;font-weight:700;color:#10b981;" id="j-caisse">0 MAD</p></div>
+        <div class="kpi-card"><p style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Solde Banque</p><p style="font-size:26px;font-weight:700;color:#3b82f6;" id="j-banque">0 MAD</p></div>
+        <div class="kpi-card"><p style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Solde Total</p><p style="font-size:26px;font-weight:700;color:#1e2433;" id="j-total">0 MAD</p></div>
+      </div>
+      <div class="card"><table style="width:100%;"><thead><tr><th>Date</th><th>Compte</th><th>Sens</th><th>Categorie</th><th>Libelle</th><th>Reference</th><th style="text-align:right;">Montant</th></tr></thead><tbody id="tbl-journal"></tbody></table></div>
+    </div>
+  </div>
+  <div class="form-view" id="fv-journal">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('journal')">← Retour</button></div>
+    <div class="form-card" style="max-width:100%;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+        <h2 style="font-size:16px;font-weight:700;">Nouvelle saisie — plusieurs lignes possibles</h2>
+        <button class="btn btn-outline" onclick="addJLine()">+ Ajouter une ligne</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="jlines" id="jlines-table">
+          <thead><tr><th style="width:130px;">Date</th><th style="width:110px;">Compte</th><th style="width:110px;">Sens</th><th style="width:150px;">Categorie</th><th>Libelle</th><th style="width:110px;">Reference</th><th style="width:130px;">Montant (MAD)</th><th style="width:40px;"></th></tr></thead>
+          <tbody id="jlines-body"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:24px;"><button class="btn btn-primary" onclick="saveJournal()">Enregistrer tout</button><button class="btn btn-outline" onclick="hideForm('journal')">Annuler</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ CHARGES -->
 <div id="page-charges" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Charges d'exploitation</h1></div>
-    <button class="btn btn-primary" onclick="showModal('modalCharge')">+ Ajouter une charge</button>
+  <div class="list-view" id="lv-charges">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Charges d exploitation</h1></div><button class="btn btn-primary" onclick="showForm('charges')">+ Ajouter une charge</button></div>
+    <div style="flex:1;padding:24px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+        <div class="kpi-card"><p style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Total Charges Mensuelles</p><p style="font-size:26px;font-weight:700;color:#f43f5e;" id="ch-total-men">0 MAD</p></div>
+        <div class="kpi-card"><p style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Total Charges Annuelles</p><p style="font-size:26px;font-weight:700;color:#7c3aed;" id="ch-total-ann">0 MAD</p></div>
+      </div>
+      <div class="card" style="margin-bottom:24px;">
+        <div style="padding:14px 20px;border-bottom:1px solid #f0f2f7;"><h3 style="font-size:14px;font-weight:600;">Charges Mensuelles</h3></div>
+        <table style="width:100%;"><thead><tr><th>Date</th><th>Libelle</th><th>Categorie</th><th style="text-align:right;">Montant</th></tr></thead><tbody id="tbl-charges-men"></tbody></table>
+      </div>
+      <div class="card">
+        <div style="padding:14px 20px;border-bottom:1px solid #f0f2f7;"><h3 style="font-size:14px;font-weight:600;">Charges Annuelles</h3></div>
+        <table style="width:100%;"><thead><tr><th>Date</th><th>Libelle</th><th>Categorie</th><th style="text-align:right;">Montant</th></tr></thead><tbody id="tbl-charges-ann"></tbody></table>
+      </div>
+    </div>
   </div>
-  <div style="flex:1;padding:24px;"><div id="cats-charges" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;"></div>
-  <div class="card"><table style="width:100%;">
-    <thead><tr><th>Date</th><th>Libellé</th><th>Catégorie</th><th style="text-align:right;">Montant</th><th>Récurrence</th></tr></thead>
-    <tbody id="tbl-charges"></tbody>
-  </table></div></div>
+  <div class="form-view" id="fv-charges">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('charges')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Ajouter une charge</h2>
+      <div class="field-group"><label class="field-label">Periodicite *</label>
+        <div style="display:flex;gap:16px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;"><input type="radio" name="ch-period" value="MENSUELLE" id="ch-men" checked style="width:auto;padding:0;border:none;box-shadow:none;"> Mensuelle</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;"><input type="radio" name="ch-period" value="ANNUELLE" id="ch-ann" style="width:auto;padding:0;border:none;box-shadow:none;"> Annuelle</label>
+        </div>
+      </div>
+      <div class="field-group"><label class="field-label">Libelle *</label><input type="text" id="ch-libelle" placeholder="ex: Loyer atelier"/></div>
+      <div class="field-group"><label class="field-label">Categorie</label><select id="ch-cat"><option>Loyer</option><option>Electricite</option><option>Eau</option><option>Salaires</option><option>Fournitures</option><option>Assurance</option><option>Maintenance</option><option>Transport</option><option>Autre</option></select></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Montant (MAD) *</label><input type="number" id="ch-montant" placeholder="0.00"/></div><div class="field-group"><label class="field-label">Date *</label><input type="date" id="ch-date"/></div></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="saveCharge()">Enregistrer</button><button class="btn btn-outline" onclick="hideForm('charges')">Annuler</button></div>
+    </div>
+  </div>
 </div>
 
-<!-- LIVRAISONS -->
+<!-- ═══════════════════════════════════════════════════ DOSSIERS -->
+<div id="page-dossiers" class="page">
+  <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Dossiers vehicules</h1><p style="font-size:13px;color:#9ca3af;" id="sub-dossiers"></p></div></div>
+  <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;" id="tbl-dossiers-wrap"><thead><tr><th></th><th>Immatriculation</th><th>Vehicule</th><th>Proprietaire</th><th>Interventions</th><th>Derniere intervention</th></tr></thead><tbody id="tbl-dossiers"></tbody></table></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ LIVRAISONS -->
 <div id="page-livraisons" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Livraisons</h1></div>
-    <button class="btn btn-primary" onclick="showModal('modalLivraison')">+ Nouvelle livraison</button>
+  <div class="list-view" id="lv-livraisons">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Livraisons</h1></div><button class="btn btn-primary" onclick="showForm('livraisons')">+ Nouvelle livraison</button></div>
+    <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;"><thead><tr><th>Numero</th><th>Client</th><th>Vehicule</th><th>Adresse</th><th>Date prevue</th><th>Statut</th></tr></thead><tbody id="tbl-livraisons"></tbody></table></div></div>
   </div>
-  <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;">
-    <thead><tr><th>Numéro</th><th>Client</th><th>Véhicule</th><th>Adresse</th><th>Date prévue</th><th>Statut</th></tr></thead>
-    <tbody id="tbl-livraisons"></tbody>
-  </table></div></div>
+  <div class="form-view" id="fv-livraisons">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('livraisons')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouvelle livraison</h2>
+      <div class="grid2"><div class="field-group"><label class="field-label">Nom client *</label><input type="text" id="li-nom"/></div><div class="field-group"><label class="field-label">Telephone *</label><input type="text" id="li-tel"/></div></div>
+      <div class="field-group"><label class="field-label">Vehicule *</label><input type="text" id="li-vehicule" placeholder="Marque Modele — Immatriculation"/></div>
+      <div class="field-group"><label class="field-label">Adresse *</label><input type="text" id="li-adresse"/></div>
+      <div class="field-group"><label class="field-label">Date prevue</label><input type="datetime-local" id="li-date"/></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="saveLivraison()">Creer</button><button class="btn btn-outline" onclick="hideForm('livraisons')">Annuler</button></div>
+    </div>
+  </div>
 </div>
 
-<!-- PERSONNEL -->
+<!-- ═══════════════════════════════════════════════════ PERSONNEL -->
 <div id="page-personnel" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Personnel</h1></div>
-    <button class="btn btn-primary" onclick="showModal('modalPersonnel')">+ Nouvel employé</button>
+  <div class="list-view" id="lv-personnel">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Personnel</h1></div><button class="btn btn-primary" onclick="showForm('personnel')">+ Nouvel employe</button></div>
+    <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;"><thead><tr><th>Employe</th><th>Poste</th><th>Telephone</th><th>Salaire</th><th>Interventions</th><th>Statut</th></tr></thead><tbody id="tbl-personnel"></tbody></table></div></div>
   </div>
-  <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;">
-    <thead><tr><th>Employé</th><th>Poste</th><th>Téléphone</th><th>Salaire</th><th>Interventions</th><th>Statut</th></tr></thead>
-    <tbody id="tbl-personnel"></tbody>
-  </table></div></div>
+  <div class="form-view" id="fv-personnel">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('personnel')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouvel employe</h2>
+      <div class="grid2"><div class="field-group"><label class="field-label">Prenom *</label><input type="text" id="per-prenom"/></div><div class="field-group"><label class="field-label">Nom *</label><input type="text" id="per-nom"/></div></div>
+      <div class="field-group"><label class="field-label">Poste *</label><select id="per-poste"><option>Mecanicien</option><option>Carrossier</option><option>Electricien auto</option><option>Peintre</option><option>Technicien diagnostic</option><option>Receptionniste</option><option>Gerant</option></select></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Telephone</label><input type="text" id="per-tel"/></div><div class="field-group"><label class="field-label">Salaire (MAD/mois)</label><input type="number" id="per-salaire"/></div></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="savePersonnel()">Enregistrer</button><button class="btn btn-outline" onclick="hideForm('personnel')">Annuler</button></div>
+    </div>
+  </div>
 </div>
 
-<!-- FOURNISSEURS -->
-<div id="page-fournisseurs" class="page">
-  <div class="header"><div><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Fournisseurs</h1></div>
-    <button class="btn btn-primary" onclick="showModal('modalFournisseur')">+ Nouveau fournisseur</button>
+<!-- ═══════════════════════════════════════════════════ STOCK -->
+<div id="page-stock" class="page">
+  <div class="list-view" id="lv-stock">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Stock pieces et fournitures</h1><p style="font-size:13px;color:#9ca3af;" id="sub-stock"></p></div><button class="btn btn-primary" onclick="showForm('stock')">+ Nouvelle piece</button></div>
+    <div style="flex:1;padding:24px;"><div id="stock-alerte" style="display:none;margin-bottom:16px;padding:12px 16px;background:#fff1f3;border:1px solid #fda4b0;border-radius:12px;font-size:14px;color:#e11d48;"></div>
+    <div class="card"><table style="width:100%;"><thead><tr><th>Reference</th><th>Designation</th><th>Fournisseur</th><th>Stock</th><th>Seuil</th><th>P. Achat</th><th>P. Vente</th><th>Etat</th></tr></thead><tbody id="tbl-stock"></tbody></table></div></div>
   </div>
-  <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;">
-    <thead><tr><th>Nom</th><th>Téléphone</th><th>Email</th><th>Contact</th><th>Pièces liées</th></tr></thead>
-    <tbody id="tbl-fournisseurs"></tbody>
-  </table></div></div>
+  <div class="form-view" id="fv-stock">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('stock')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouvelle piece</h2>
+      <div class="grid2"><div class="field-group"><label class="field-label">Reference *</label><input type="text" id="p-ref" placeholder="REF-001"/></div><div class="field-group"><label class="field-label">Categorie *</label><input type="text" id="p-cat" placeholder="Freinage"/></div></div>
+      <div class="field-group"><label class="field-label">Designation *</label><input type="text" id="p-nom" placeholder="Plaquettes de frein"/></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Prix achat (MAD)</label><input type="number" id="p-achat" placeholder="0.00"/></div><div class="field-group"><label class="field-label">Prix vente (MAD)</label><input type="number" id="p-vente" placeholder="0.00"/></div></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Quantite stock</label><input type="number" id="p-qty" value="0"/></div><div class="field-group"><label class="field-label">Seuil alerte</label><input type="number" id="p-seuil" value="5"/></div></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="savePiece()">Enregistrer</button><button class="btn btn-outline" onclick="hideForm('stock')">Annuler</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ FOURNISSEURS -->
+<div id="page-fournisseurs" class="page">
+  <div class="list-view" id="lv-fournisseurs">
+    <div class="header"><div><h1 style="font-size:18px;font-weight:700;">Fournisseurs</h1></div><button class="btn btn-primary" onclick="showForm('fournisseurs')">+ Nouveau fournisseur</button></div>
+    <div style="flex:1;padding:24px;"><div class="card"><table style="width:100%;"><thead><tr><th>Nom</th><th>Telephone</th><th>Email</th><th>Contact</th><th>Pieces liees</th></tr></thead><tbody id="tbl-fournisseurs"></tbody></table></div></div>
+  </div>
+  <div class="form-view" id="fv-fournisseurs">
+    <div style="margin-bottom:20px;"><button class="btn btn-outline" onclick="hideForm('fournisseurs')">← Retour</button></div>
+    <div class="form-card">
+      <h2 style="font-size:16px;font-weight:700;margin-bottom:28px;">Nouveau fournisseur</h2>
+      <div class="field-group"><label class="field-label">Nom *</label><input type="text" id="fo-nom"/></div>
+      <div class="grid2"><div class="field-group"><label class="field-label">Telephone</label><input type="text" id="fo-tel"/></div><div class="field-group"><label class="field-label">Email</label><input type="text" id="fo-email"/></div></div>
+      <div class="field-group"><label class="field-label">Contact</label><input type="text" id="fo-contact" placeholder="Nom du responsable"/></div>
+      <div style="display:flex;gap:12px;margin-top:8px;"><button class="btn btn-primary" onclick="saveFournisseur()">Enregistrer</button><button class="btn btn-outline" onclick="hideForm('fournisseurs')">Annuler</button></div>
+    </div>
+  </div>
 </div>
 
 <!-- PAGES SIMPLES -->
-<div id="page-pv" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Procès-verbal</h1></div><div style="flex:1;padding:24px;"><div class="card" style="padding:64px;text-align:center;"><div style="width:48px;height:48px;background:#f8f9fc;border-radius:16px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><p style="font-size:14px;color:#9ca3af;">Aucun procès-verbal — cliquez sur Créer</p><button class="btn btn-primary" style="margin-top:12px;">+ Créer</button></div></div></div>
-<div id="page-bons_commande" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Bons de commande</h1></div><div style="flex:1;padding:24px;"><div class="card" style="padding:64px;text-align:center;"><p style="font-size:14px;color:#9ca3af;">Aucun bon de commande</p><button class="btn btn-primary" style="margin-top:12px;">+ Créer</button></div></div></div>
-<div id="page-bons_livraison" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Bons de livraison</h1></div><div style="flex:1;padding:24px;"><div class="card" style="padding:64px;text-align:center;"><p style="font-size:14px;color:#9ca3af;">Aucun bon de livraison</p><button class="btn btn-primary" style="margin-top:12px;">+ Créer</button></div></div></div>
-<div id="page-fiches" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Fiches techniques</h1></div><div style="flex:1;padding:24px;"><div class="card" style="padding:64px;text-align:center;"><p style="font-size:14px;color:#9ca3af;">Aucune fiche technique</p><button class="btn btn-primary" style="margin-top:12px;">+ Créer</button></div></div></div>
-<div id="page-attestations" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Attestations d'immobilisation</h1></div><div style="flex:1;padding:24px;"><div class="card" style="padding:64px;text-align:center;"><p style="font-size:14px;color:#9ca3af;">Aucune attestation</p><button class="btn btn-primary" style="margin-top:12px;">+ Créer</button></div></div></div>
-<div id="page-bureaux" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Bureaux d'expertises</h1></div><div style="flex:1;padding:24px;"><div class="card" style="padding:64px;text-align:center;"><p style="font-size:14px;color:#9ca3af;">Aucun bureau</p><button class="btn btn-primary" style="margin-top:12px;">+ Ajouter</button></div></div></div>
-<div id="page-partenaires" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;color:#1e2433;">Partenaires</h1></div><div style="flex:1;padding:24px;"><div class="card" style="padding:64px;text-align:center;"><p style="font-size:14px;color:#9ca3af;">Aucun partenaire</p><button class="btn btn-primary" style="margin-top:12px;">+ Ajouter</button></div></div></div>
+<div id="page-pv" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;">Proces-verbal</h1></div><div style="padding:48px;text-align:center;color:#9ca3af;">Aucun proces-verbal<br><button class="btn btn-primary" style="margin-top:16px;">+ Creer</button></div></div>
+<div id="page-bons_commande" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;">Bons de commande</h1></div><div style="padding:48px;text-align:center;color:#9ca3af;">Aucun bon de commande<br><button class="btn btn-primary" style="margin-top:16px;">+ Creer</button></div></div>
+<div id="page-bons_livraison" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;">Bons de livraison</h1></div><div style="padding:48px;text-align:center;color:#9ca3af;">Aucun bon de livraison<br><button class="btn btn-primary" style="margin-top:16px;">+ Creer</button></div></div>
+<div id="page-fiches" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;">Fiches techniques</h1></div><div style="padding:48px;text-align:center;color:#9ca3af;">Aucune fiche technique<br><button class="btn btn-primary" style="margin-top:16px;">+ Creer</button></div></div>
+<div id="page-attestations" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;">Attestations d immobilisation</h1></div><div style="padding:48px;text-align:center;color:#9ca3af;">Aucune attestation<br><button class="btn btn-primary" style="margin-top:16px;">+ Creer</button></div></div>
+<div id="page-bureaux" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;">Bureaux d expertises</h1></div><div style="padding:48px;text-align:center;color:#9ca3af;">Aucun bureau<br><button class="btn btn-primary" style="margin-top:16px;">+ Ajouter</button></div></div>
+<div id="page-partenaires" class="page"><div class="header"><h1 style="font-size:18px;font-weight:700;">Partenaires</h1></div><div style="padding:48px;text-align:center;color:#9ca3af;">Aucun partenaire<br><button class="btn btn-primary" style="margin-top:16px;">+ Ajouter</button></div></div>
 
 </div><!-- /main -->
 
-<!-- MODALS -->
-<div id="modalOrdre-bg" class="modal-bg" onclick="closeModal('modalOrdre')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouvel ordre de réparation</h2>
-    <button onclick="closeModal('modalOrdre')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div><label>Véhicule (immatriculation)</label><input type="text" id="o-vehicule" placeholder="ex: 54321-B-2"/></div>
-    <div><label>Services</label>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;" id="services-btns"></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Technicien</label><input type="text" id="o-tech" placeholder="Nom du technicien"/></div>
-      <div><label>Kilométrage</label><input type="number" id="o-km" placeholder="120000"/></div>
-    </div>
-    <div><label>Description</label><textarea id="o-desc" rows="3" placeholder="Travaux à effectuer..."></textarea></div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveOrdre()">Créer l'ordre</button>
-      <button class="btn btn-outline" onclick="closeModal('modalOrdre')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalClient-bg" class="modal-bg" onclick="closeModal('modalClient')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouveau client</h2>
-    <button onclick="closeModal('modalClient')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Prénom *</label><input type="text" id="c-prenom" placeholder="Mohamed"/></div>
-      <div><label>Nom *</label><input type="text" id="c-nom" placeholder="Alami"/></div>
-    </div>
-    <div><label>Téléphone *</label><input type="text" id="c-tel" placeholder="0661234567"/></div>
-    <div><label>Email</label><input type="text" id="c-email" placeholder="exemple@email.com"/></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Adresse</label><input type="text" id="c-adresse" placeholder="Rue, Quartier"/></div>
-      <div><label>Ville</label><input type="text" id="c-ville" placeholder="Casablanca"/></div>
-    </div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveClient()">Enregistrer</button>
-      <button class="btn btn-outline" onclick="closeModal('modalClient')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalVehicule-bg" class="modal-bg" onclick="closeModal('modalVehicule')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouveau véhicule</h2>
-    <button onclick="closeModal('modalVehicule')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div><label>Client propriétaire *</label><select id="v-client"><option value="">Sélectionner...</option></select></div>
-    <div><label>Immatriculation *</label><input type="text" id="v-immat" placeholder="12345-A-1"/></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Marque *</label><input type="text" id="v-marque" placeholder="Toyota"/></div>
-      <div><label>Modèle *</label><input type="text" id="v-modele" placeholder="Corolla"/></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-      <div><label>Année</label><input type="number" id="v-annee" value="2020"/></div>
-      <div><label>Couleur</label><input type="text" id="v-couleur" placeholder="Blanc"/></div>
-      <div><label>Carburant</label><select id="v-carburant"><option>Essence</option><option>Diesel</option><option>Hybride</option><option>Électrique</option></select></div>
-    </div>
-    <div><label>Kilométrage</label><input type="number" id="v-km" placeholder="0"/></div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveVehicule()">Enregistrer</button>
-      <button class="btn btn-outline" onclick="closeModal('modalVehicule')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalFacture-bg" class="modal-bg" onclick="closeModal('modalFacture')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouvelle facture</h2>
-    <button onclick="closeModal('modalFacture')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div><label>Client *</label><select id="f-client"><option value="">Sélectionner...</option></select></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Montant HT (MAD) *</label><input type="number" id="f-ht" placeholder="1000" oninput="calcTTC()"/></div>
-      <div><label>TVA (%)</label><input type="number" id="f-tva" value="20" oninput="calcTTC()"/></div>
-    </div>
-    <div><label>Montant TTC</label><input type="text" id="f-ttc" readonly style="background:#f0f2f7;"/></div>
-    <div><label>Notes</label><textarea id="f-notes" rows="2" placeholder="Observations..."></textarea></div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveFacture()">Créer la facture</button>
-      <button class="btn btn-outline" onclick="closeModal('modalFacture')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalJournal-bg" class="modal-bg" onclick="closeModal('modalJournal')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouvelle opération</h2>
-    <button onclick="closeModal('modalJournal')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div style="display:flex;gap:8px;" id="type-btns">
-      <button onclick="setJType('ENTREE',this)" class="btn btn-outline" style="flex:1;justify-content:center;background:#edfaf4;color:#10b981;border-color:#a7f0c8;">↑ Entrée</button>
-      <button onclick="setJType('SORTIE',this)" class="btn btn-outline" style="flex:1;justify-content:center;">↓ Sortie</button>
-    </div>
-    <div><label>Catégorie</label><select id="j-cat"><option>Règlement facture</option><option>Acompte client</option><option>Achat pièces</option><option>Salaire</option><option>Loyer</option><option>Autre</option></select></div>
-    <div><label>Libellé *</label><input type="text" id="j-libelle" placeholder="Description de l'opération"/></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Montant (MAD) *</label><input type="number" id="j-montant" placeholder="0.00"/></div>
-      <div><label>Date *</label><input type="date" id="j-date"/></div>
-    </div>
-    <div><label>Compte</label><select id="j-compte"><option>Caisse</option><option>Banque CIH</option><option>Banque Attijariwafa</option><option>Banque Populaire</option></select></div>
-    <div><label>Référence</label><input type="text" id="j-ref" placeholder="ex: FAC-202506-1234"/></div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveJournal()">Enregistrer</button>
-      <button class="btn btn-outline" onclick="closeModal('modalJournal')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalCharge-bg" class="modal-bg" onclick="closeModal('modalCharge')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Ajouter une charge</h2>
-    <button onclick="closeModal('modalCharge')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div><label>Libellé *</label><input type="text" id="ch-libelle" placeholder="ex: Loyer atelier"/></div>
-    <div><label>Catégorie</label><select id="ch-cat"><option>Loyer</option><option>Électricité</option><option>Eau</option><option>Salaires</option><option>Fournitures</option><option>Assurance</option><option>Maintenance</option><option>Transport</option><option>Autre</option></select></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Montant (MAD) *</label><input type="number" id="ch-montant" placeholder="0.00"/></div>
-      <div><label>Date *</label><input type="date" id="ch-date"/></div>
-    </div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveCharge()">Enregistrer</button>
-      <button class="btn btn-outline" onclick="closeModal('modalCharge')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalPiece-bg" class="modal-bg" onclick="closeModal('modalPiece')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouvelle pièce</h2>
-    <button onclick="closeModal('modalPiece')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Référence *</label><input type="text" id="p-ref" placeholder="REF-001"/></div>
-      <div><label>Catégorie *</label><input type="text" id="p-cat" placeholder="Freinage"/></div>
-    </div>
-    <div><label>Désignation *</label><input type="text" id="p-nom" placeholder="Plaquettes de frein"/></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Prix achat (MAD)</label><input type="number" id="p-achat" placeholder="0.00"/></div>
-      <div><label>Prix vente (MAD)</label><input type="number" id="p-vente" placeholder="0.00"/></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Quantité stock</label><input type="number" id="p-qty" value="0"/></div>
-      <div><label>Seuil alerte</label><input type="number" id="p-seuil" value="5"/></div>
-    </div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="savePiece()">Enregistrer</button>
-      <button class="btn btn-outline" onclick="closeModal('modalPiece')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalDevis-bg" class="modal-bg" onclick="closeModal('modalDevis')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouveau devis</h2>
-    <button onclick="closeModal('modalDevis')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div><label>Client *</label><select id="dev-client"><option value="">Sélectionner...</option></select></div>
-    <div><label>Véhicule</label><input type="text" id="dev-vehicule" placeholder="Marque Modèle — Immatriculation"/></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Montant HT (MAD)</label><input type="number" id="dev-ht" placeholder="0.00" oninput="calcDevTTC()"/></div>
-      <div><label>Validité (jours)</label><input type="number" id="dev-val" value="30"/></div>
-    </div>
-    <div><label>Montant TTC</label><input type="text" id="dev-ttc" readonly style="background:#f0f2f7;"/></div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveDevis()">Créer le devis</button>
-      <button class="btn btn-outline" onclick="closeModal('modalDevis')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalPersonnel-bg" class="modal-bg" onclick="closeModal('modalPersonnel')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouvel employé</h2>
-    <button onclick="closeModal('modalPersonnel')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Prénom *</label><input type="text" id="per-prenom"/></div>
-      <div><label>Nom *</label><input type="text" id="per-nom"/></div>
-    </div>
-    <div><label>Poste *</label><select id="per-poste"><option>Mécanicien</option><option>Carrossier</option><option>Électricien auto</option><option>Peintre</option><option>Technicien diagnostic</option><option>Réceptionniste</option><option>Gérant</option></select></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Téléphone</label><input type="text" id="per-tel"/></div>
-      <div><label>Salaire (MAD/mois)</label><input type="number" id="per-salaire"/></div>
-    </div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="savePersonnel()">Enregistrer</button>
-      <button class="btn btn-outline" onclick="closeModal('modalPersonnel')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalFournisseur-bg" class="modal-bg" onclick="closeModal('modalFournisseur')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouveau fournisseur</h2>
-    <button onclick="closeModal('modalFournisseur')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div><label>Nom *</label><input type="text" id="fo-nom"/></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Téléphone</label><input type="text" id="fo-tel"/></div>
-      <div><label>Email</label><input type="text" id="fo-email"/></div>
-    </div>
-    <div><label>Contact</label><input type="text" id="fo-contact" placeholder="Nom du responsable"/></div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveFournisseur()">Enregistrer</button>
-      <button class="btn btn-outline" onclick="closeModal('modalFournisseur')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<div id="modalLivraison-bg" class="modal-bg" onclick="closeModal('modalLivraison')">
-<div class="modal" onclick="event.stopPropagation()">
-  <div style="padding:20px 24px;border-bottom:1px solid #f0f2f7;display:flex;justify-content:space-between;align-items:center;">
-    <h2 style="font-size:16px;font-weight:700;color:#1e2433;">Nouvelle livraison</h2>
-    <button onclick="closeModal('modalLivraison')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;">×</button>
-  </div>
-  <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div><label>Nom client *</label><input type="text" id="li-nom"/></div>
-      <div><label>Téléphone *</label><input type="text" id="li-tel"/></div>
-    </div>
-    <div><label>Véhicule *</label><input type="text" id="li-vehicule" placeholder="Marque Modèle — Immatriculation"/></div>
-    <div><label>Adresse *</label><input type="text" id="li-adresse"/></div>
-    <div><label>Date prévue</label><input type="datetime-local" id="li-date"/></div>
-    <div style="display:flex;gap:12px;">
-      <button class="btn btn-primary" onclick="saveLivraison()">Créer</button>
-      <button class="btn btn-outline" onclick="closeModal('modalLivraison')">Annuler</button>
-    </div>
-  </div>
-</div></div>
-
-<!-- Notification -->
-<div id="notif" class="notification">✓ Enregistré avec succès</div>
+<div id="notif" class="notification">Enregistre avec succes</div>
 
 <script>
-// ─── DATA STORE (localStorage) ────────────────────────────────────────────────
-const KEYS = ['clients','vehicules','ordres','factures','devis','stock','journal','charges','livraisons','personnel','fournisseurs'];
-function load(k) { try { return JSON.parse(localStorage.getItem('ma_'+k)||'[]'); } catch { return []; } }
-function save(k,v) { localStorage.setItem('ma_'+k, JSON.stringify(v)); }
+// ─── STORE ──────────────────────────────────────────────────────────────────
+function load(k){try{return JSON.parse(localStorage.getItem('ma_'+k)||'[]');}catch{return[];}}
+function save(k,v){localStorage.setItem('ma_'+k,JSON.stringify(v));}
 
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
-function fmtCur(n) { return new Intl.NumberFormat('fr-MA',{style:'currency',currency:'MAD',maximumFractionDigits:0}).format(n||0); }
-function fmtDate(d) { if(!d) return '—'; return new Date(d).toLocaleDateString('fr-FR'); }
-function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6).toUpperCase(); }
-function num(prefix) { const d=new Date(); return prefix+'-'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+'-'+Math.floor(1000+Math.random()*9000); }
-function notif(msg='Enregistré ✓') { const el=document.getElementById('notif'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',2500); }
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+function fmtCur(n){return new Intl.NumberFormat('fr-MA',{style:'currency',currency:'MAD',maximumFractionDigits:0}).format(n||0);}
+function fmtDate(d){if(!d)return '—';try{return new Date(d).toLocaleDateString('fr-FR');}catch{return d;}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6).toUpperCase();}
+function numGen(p){var d=new Date();return p+'-'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+'-'+Math.floor(1000+Math.random()*9000);}
+function notif(msg){var el=document.getElementById('notif');el.textContent=msg||'Enregistre';el.style.display='block';setTimeout(function(){el.style.display='none';},2500);}
+function empty(msg){return '<tr><td colspan="10" style="text-align:center;padding:40px;color:#9ca3af;font-size:14px;">'+msg+'</td></tr>';}
+function today(){return new Date().toISOString().split('T')[0];}
 
-// ─── NAVIGATION ───────────────────────────────────────────────────────────────
-let currentPage = 'dashboard';
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-item,.sub-item').forEach(el=>el.classList.remove('active'));
-  currentPage = id;
+// ─── NAVIGATION ─────────────────────────────────────────────────────────────
+var currentPage='dashboard';
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  var pg=document.getElementById('page-'+id);
+  if(pg){pg.classList.add('active');}
+  document.querySelectorAll('.nav-item,.sub-item').forEach(function(el){el.classList.remove('active');});
+  currentPage=id;
   renderPage(id);
-  // Open parent menu if submenu item
-  const docPages = ['pv','devis','ordres','bons_commande','bons_livraison','factures','fiches','attestations'];
-  const basePages = ['clients','vehicules','personnel','stock','fournisseurs','bureaux','partenaires'];
-  if (docPages.includes(id)) { document.getElementById('menuDocs').classList.add('open'); document.getElementById('chevronDocs').classList.add('open'); }
-  if (basePages.includes(id)) { document.getElementById('menuBase').classList.add('open'); document.getElementById('chevronBase').classList.add('open'); }
+  var docPages=['pv','devis','ordres','bons_commande','bons_livraison','factures','fiches','attestations'];
+  var basePages=['clients','vehicules','personnel','stock','fournisseurs','bureaux','partenaires'];
+  if(docPages.indexOf(id)>=0){open('menuDocs','chevronDocs');}
+  if(basePages.indexOf(id)>=0){open('menuBase','chevronBase');}
 }
-function toggleMenu(id, btn) {
-  const m = document.getElementById(id);
-  const chevronId = id === 'menuDocs' ? 'chevronDocs' : 'chevronBase';
-  const ch = document.getElementById(chevronId);
-  m.classList.toggle('open');
-  ch.classList.toggle('open');
+function open(menuId,chevId){
+  var m=document.getElementById(menuId);var c=document.getElementById(chevId);
+  if(m)m.classList.add('open');if(c)c.classList.add('open');
 }
-
-// ─── MODALS ───────────────────────────────────────────────────────────────────
-function showModal(id) {
-  document.getElementById(id+'-bg').classList.add('open');
-  if(id==='modalOrdre') renderServicesBtns();
-  if(id==='modalClient'||id==='modalVehicule'||id==='modalFacture'||id==='modalDevis') populateClientSelects();
-  if(id==='modalJournal') { document.getElementById('j-date').value=new Date().toISOString().split('T')[0]; setJType('ENTREE'); }
-  if(id==='modalCharge') document.getElementById('ch-date').value=new Date().toISOString().split('T')[0];
-}
-function closeModal(id) { document.getElementById(id+'-bg').classList.remove('open'); }
-
-// ─── SERVICES ─────────────────────────────────────────────────────────────────
-const SERVICES = ['Carrosserie','Peinture au four','Mécanique','Diagnostic','Electricité','Climatisation','Révision','Freinage','Suspension','Echappement'];
-let selectedServices = [];
-function renderServicesBtns() {
-  selectedServices = [];
-  const c = document.getElementById('services-btns');
-  c.innerHTML = SERVICES.map(s=>`<button onclick="toggleService(this,'${s}')" class="btn btn-outline" style="padding:6px 14px;font-size:12px;">${s}</button>`).join('');
-}
-function toggleService(btn,s) {
-  if(selectedServices.includes(s)) { selectedServices=selectedServices.filter(x=>x!==s); btn.style.background=''; btn.style.color=''; btn.style.borderColor=''; }
-  else { selectedServices.push(s); btn.style.background='#3b82f6'; btn.style.color='#fff'; btn.style.borderColor='#3b82f6'; }
+function toggleMenu(menuId,chevId){
+  var m=document.getElementById(menuId);var c=document.getElementById(chevId);
+  if(m)m.classList.toggle('open');if(c)c.classList.toggle('open');
 }
 
-// ─── POPULATE SELECTS ─────────────────────────────────────────────────────────
-function populateClientSelects() {
-  const clients = load('clients');
-  const opts = '<option value="">Sélectionner...</option>'+clients.map(c=>`<option value="${c.id}">${c.prenom} ${c.nom}</option>`).join('');
-  ['f-client','dev-client'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=opts; });
-  // vehicule client select
-  const vc = document.getElementById('v-client');
-  if(vc) vc.innerHTML = opts;
+// ─── FORM SHOW/HIDE ─────────────────────────────────────────────────────────
+function showForm(page){
+  var lv=document.getElementById('lv-'+page);
+  var fv=document.getElementById('fv-'+page);
+  if(!fv){return;}
+  if(lv)lv.classList.add('hidden');
+  fv.classList.add('open');
+  if(page==='ordres'){renderServicesBtns();}
+  if(page==='vehicules'||page==='factures'||page==='devis'){populateClientSelects();}
+  if(page==='journal'){initJLines();}
+  if(page==='charges'){document.getElementById('ch-date').value=today();}
+}
+function hideForm(page){
+  var lv=document.getElementById('lv-'+page);
+  var fv=document.getElementById('fv-'+page);
+  if(lv)lv.classList.remove('hidden');
+  if(fv)fv.classList.remove('open');
+  renderPage(page);
 }
 
-// ─── SAVE FUNCTIONS ───────────────────────────────────────────────────────────
-function saveClient() {
-  const prenom=document.getElementById('c-prenom').value.trim();
-  const nom=document.getElementById('c-nom').value.trim();
-  const tel=document.getElementById('c-tel').value.trim();
-  if(!prenom||!nom||!tel) { alert('Prénom, Nom et Téléphone sont obligatoires'); return; }
-  const clients=load('clients');
-  clients.unshift({id:uid(),prenom,nom,telephone:tel,email:document.getElementById('c-email').value,adresse:document.getElementById('c-adresse').value,ville:document.getElementById('c-ville').value,createdAt:new Date().toISOString(),vehicules:0});
+// ─── SERVICES ───────────────────────────────────────────────────────────────
+var SERVICES=['Carrosserie','Peinture au four','Mecanique','Diagnostic','Electricite','Climatisation','Revision','Freinage','Suspension','Echappement'];
+var selectedServices=[];
+function renderServicesBtns(){
+  selectedServices=[];
+  var c=document.getElementById('services-btns');
+  c.innerHTML=SERVICES.map(function(s){
+    return '<button onclick="toggleService(this,\''+s+'\')" style="padding:6px 14px;font-size:12px;border:1px solid #e8eaf0;border-radius:10px;background:#fff;cursor:pointer;color:#374151;font-family:inherit;transition:all .15s;">'+s+'</button>';
+  }).join('');
+}
+function toggleService(btn,s){
+  var idx=selectedServices.indexOf(s);
+  if(idx>=0){selectedServices.splice(idx,1);btn.style.background='#fff';btn.style.color='#374151';btn.style.borderColor='#e8eaf0';}
+  else{selectedServices.push(s);btn.style.background='#3b82f6';btn.style.color='#fff';btn.style.borderColor='#3b82f6';}
+}
+
+// ─── POPULATE SELECTS ───────────────────────────────────────────────────────
+function populateClientSelects(){
+  var clients=load('clients');
+  var opts='<option value="">Selectionner...</option>'+clients.map(function(c){return '<option value="'+c.id+'">'+c.prenom+' '+c.nom+'</option>';}).join('');
+  ['f-client','dev-client','v-client'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+
+// ─── JOURNAL MULTI-LINES ────────────────────────────────────────────────────
+function jLineHTML(i){
+  return '<tr id="jl-'+i+'">'
+    +'<td><input type="date" id="jl-date-'+i+'" value="'+today()+'"/></td>'
+    +'<td><select id="jl-compte-'+i+'"><option value="Caisse">Caisse</option><option value="Banque">Banque</option></select></td>'
+    +'<td><select id="jl-sens-'+i+'"><option value="ENTREE">Entree</option><option value="SORTIE">Sortie</option></select></td>'
+    +'<td><select id="jl-cat-'+i+'"><option>Reglement facture</option><option>Acompte client</option><option>Achat pieces</option><option>Salaire</option><option>Loyer</option><option>Autre</option></select></td>'
+    +'<td><input type="text" id="jl-lib-'+i+'" placeholder="Libelle de operation"/></td>'
+    +'<td><input type="text" id="jl-ref-'+i+'" placeholder="REF"/></td>'
+    +'<td><input type="number" id="jl-mont-'+i+'" placeholder="0.00" min="0"/></td>'
+    +'<td><button onclick="removeJLine('+i+')" style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:18px;padding:4px;" title="Supprimer">x</button></td>'
+    +'</tr>';
+}
+var jLineCount=0;
+function initJLines(){
+  jLineCount=0;
+  var tbody=document.getElementById('jlines-body');
+  tbody.innerHTML='';
+  addJLine();addJLine();addJLine();
+}
+function addJLine(){
+  var tbody=document.getElementById('jlines-body');
+  tbody.insertAdjacentHTML('beforeend',jLineHTML(jLineCount));
+  jLineCount++;
+}
+function removeJLine(i){
+  var row=document.getElementById('jl-'+i);
+  if(row)row.parentNode.removeChild(row);
+}
+
+// ─── SAVE FUNCTIONS ─────────────────────────────────────────────────────────
+function saveClient(){
+  var prenom=document.getElementById('c-prenom').value.trim();
+  var nom=document.getElementById('c-nom').value.trim();
+  var tel=document.getElementById('c-tel').value.trim();
+  if(!prenom||!nom||!tel){alert('Prenom, Nom et Telephone sont obligatoires');return;}
+  var clients=load('clients');
+  clients.unshift({id:uid(),prenom:prenom,nom:nom,telephone:tel,email:document.getElementById('c-email').value,adresse:document.getElementById('c-adresse').value,ville:document.getElementById('c-ville').value,createdAt:new Date().toISOString(),vehicules:0});
   save('clients',clients);
-  closeModal('modalClient');
-  ['c-prenom','c-nom','c-tel','c-email','c-adresse','c-ville'].forEach(id=>document.getElementById(id).value='');
-  notif('Client ajouté ✓');
-  renderPage('clients'); renderPage('dashboard');
+  ['c-prenom','c-nom','c-tel','c-email','c-adresse','c-ville'].forEach(function(id){document.getElementById(id).value='';});
+  notif('Client ajoute');
+  hideForm('clients');
 }
 
-function saveVehicule() {
-  const immat=document.getElementById('v-immat').value.trim();
-  const marque=document.getElementById('v-marque').value.trim();
-  const modele=document.getElementById('v-modele').value.trim();
-  const clientId=document.getElementById('v-client').value;
-  if(!immat||!marque||!modele||!clientId) { alert('Tous les champs obligatoires doivent être remplis'); return; }
-  const clients=load('clients');
-  const client=clients.find(c=>c.id===clientId)||{prenom:'',nom:''};
-  const vehicules=load('vehicules');
-  vehicules.unshift({id:uid(),immatriculation:immat.toUpperCase(),marque,modele,annee:parseInt(document.getElementById('v-annee').value)||2020,couleur:document.getElementById('v-couleur').value,carburant:document.getElementById('v-carburant').value,kilometrage:parseInt(document.getElementById('v-km').value)||0,clientId,clientNom:client.prenom+' '+client.nom,ordres:0,createdAt:new Date().toISOString()});
+function saveVehicule(){
+  var immat=document.getElementById('v-immat').value.trim();
+  var marque=document.getElementById('v-marque').value.trim();
+  var modele=document.getElementById('v-modele').value.trim();
+  var clientId=document.getElementById('v-client').value;
+  if(!immat||!marque||!modele||!clientId){alert('Tous les champs obligatoires doivent etre remplis');return;}
+  var clients=load('clients');
+  var client=clients.find(function(c){return c.id===clientId;})||{prenom:'',nom:''};
+  var vehicules=load('vehicules');
+  vehicules.unshift({id:uid(),immatriculation:immat.toUpperCase(),marque:marque,modele:modele,annee:parseInt(document.getElementById('v-annee').value)||2020,couleur:document.getElementById('v-couleur').value,carburant:document.getElementById('v-carburant').value,kilometrage:parseInt(document.getElementById('v-km').value)||0,clientId:clientId,clientNom:client.prenom+' '+client.nom,ordres:0,createdAt:new Date().toISOString()});
   save('vehicules',vehicules);
-  closeModal('modalVehicule');
-  notif('Véhicule ajouté ✓');
-  renderPage('vehicules'); renderPage('dashboard');
+  notif('Vehicule ajoute');
+  hideForm('vehicules');
 }
 
-function saveOrdre() {
-  if(!selectedServices.length) { alert('Sélectionnez au moins un service'); return; }
-  const vehiculeInfo=document.getElementById('o-vehicule').value.trim()||'Non précisé';
-  const ordres=load('ordres');
-  ordres.unshift({id:uid(),numero:num('OR'),vehiculeInfo,services:selectedServices,technicien:document.getElementById('o-tech').value,kilometrage:document.getElementById('o-km').value,description:document.getElementById('o-desc').value,statut:'EN_ATTENTE',dateEntree:new Date().toISOString()});
+function saveOrdre(){
+  if(!selectedServices.length){alert('Selectionnez au moins un service');return;}
+  var vehiculeInfo=document.getElementById('o-vehicule').value.trim()||'Non precise';
+  var ordres=load('ordres');
+  ordres.unshift({id:uid(),numero:numGen('OR'),vehiculeInfo:vehiculeInfo,services:selectedServices,technicien:document.getElementById('o-tech').value,kilometrage:document.getElementById('o-km').value,description:document.getElementById('o-desc').value,statut:'EN_ATTENTE',dateEntree:new Date().toISOString()});
   save('ordres',ordres);
-  closeModal('modalOrdre');
-  ['o-vehicule','o-tech','o-km','o-desc'].forEach(id=>document.getElementById(id).value='');
-  notif('Ordre créé ✓');
-  renderPage('ordres'); renderPage('dashboard');
+  ['o-vehicule','o-tech','o-km','o-desc'].forEach(function(id){document.getElementById(id).value='';});
+  notif('Ordre cree');
+  hideForm('ordres');
 }
 
-function calcTTC() {
-  const ht=parseFloat(document.getElementById('f-ht').value)||0;
-  const tva=parseFloat(document.getElementById('f-tva').value)||20;
+function calcTTC(){
+  var ht=parseFloat(document.getElementById('f-ht').value)||0;
+  var tva=parseFloat(document.getElementById('f-tva').value)||20;
   document.getElementById('f-ttc').value=fmtCur(ht*(1+tva/100));
 }
-function saveFacture() {
-  const clientId=document.getElementById('f-client').value;
-  const ht=parseFloat(document.getElementById('f-ht').value)||0;
-  const tva=parseFloat(document.getElementById('f-tva').value)||20;
-  if(!clientId||!ht) { alert('Client et montant HT sont obligatoires'); return; }
-  const clients=load('clients');
-  const client=clients.find(c=>c.id===clientId)||{prenom:'',nom:''};
-  const factures=load('factures');
-  factures.unshift({id:uid(),numero:num('FAC'),clientId,clientNom:client.prenom+' '+client.nom,montantHT:ht,tva,montantTTC:ht*(1+tva/100),statut:'EN_ATTENTE',dateEmission:new Date().toISOString(),notes:document.getElementById('f-notes').value});
+function saveFacture(){
+  var clientId=document.getElementById('f-client').value;
+  var ht=parseFloat(document.getElementById('f-ht').value)||0;
+  var tva=parseFloat(document.getElementById('f-tva').value)||20;
+  if(!clientId||!ht){alert('Client et montant HT sont obligatoires');return;}
+  var clients=load('clients');
+  var client=clients.find(function(c){return c.id===clientId;})||{prenom:'',nom:''};
+  var factures=load('factures');
+  factures.unshift({id:uid(),numero:numGen('FAC'),clientId:clientId,clientNom:client.prenom+' '+client.nom,montantHT:ht,tva:tva,montantTTC:ht*(1+tva/100),statut:'EN_ATTENTE',dateEmission:new Date().toISOString(),notes:document.getElementById('f-notes').value});
   save('factures',factures);
-  closeModal('modalFacture');
-  ['f-ht','f-notes'].forEach(id=>document.getElementById(id).value='');
-  notif('Facture créée ✓');
-  renderPage('factures'); renderPage('dashboard');
+  ['f-ht','f-notes'].forEach(function(id){document.getElementById(id).value='';});
+  notif('Facture creee');
+  hideForm('factures');
 }
 
-let jType='ENTREE';
-function setJType(t,btn) {
-  jType=t;
-  document.querySelectorAll('#type-btns button').forEach((b,i)=>{
-    b.style.background=i===(t==='ENTREE'?0:1)?t==='ENTREE'?'#edfaf4':'#fff1f3':'#fff';
-    b.style.color=i===(t==='ENTREE'?0:1)?t==='ENTREE'?'#10b981':'#f43f5e':'#374151';
-    b.style.borderColor=i===(t==='ENTREE'?0:1)?t==='ENTREE'?'#a7f0c8':'#fda4b0':'#e8eaf0';
-  });
-}
-function saveJournal() {
-  const libelle=document.getElementById('j-libelle').value.trim();
-  const montant=parseFloat(document.getElementById('j-montant').value)||0;
-  if(!libelle||!montant) { alert('Libellé et montant sont obligatoires'); return; }
-  const journal=load('journal');
-  journal.unshift({id:uid(),type:jType,categorie:document.getElementById('j-cat').value,libelle,montant,date:document.getElementById('j-date').value||new Date().toISOString().split('T')[0],compte:document.getElementById('j-compte').value,reference:document.getElementById('j-ref').value});
-  save('journal',journal);
-  closeModal('modalJournal');
-  ['j-libelle','j-montant','j-ref'].forEach(id=>document.getElementById(id).value='');
-  notif('Opération enregistrée ✓');
-  renderPage('journal'); renderPage('dashboard');
-}
-
-function saveCharge() {
-  const libelle=document.getElementById('ch-libelle').value.trim();
-  const montant=parseFloat(document.getElementById('ch-montant').value)||0;
-  if(!libelle||!montant) { alert('Libellé et montant sont obligatoires'); return; }
-  const charges=load('charges');
-  charges.unshift({id:uid(),libelle,categorie:document.getElementById('ch-cat').value,montant,date:document.getElementById('ch-date').value||new Date().toISOString().split('T')[0],recurrente:false});
-  save('charges',charges);
-  closeModal('modalCharge');
-  ['ch-libelle','ch-montant'].forEach(id=>document.getElementById(id).value='');
-  notif('Charge enregistrée ✓');
-  renderPage('charges');
-}
-
-function savePiece() {
-  const ref=document.getElementById('p-ref').value.trim();
-  const nom=document.getElementById('p-nom').value.trim();
-  if(!ref||!nom) { alert('Référence et désignation sont obligatoires'); return; }
-  const stock=load('stock');
-  stock.unshift({id:uid(),reference:ref,nom,categorie:document.getElementById('p-cat').value,prixAchat:parseFloat(document.getElementById('p-achat').value)||0,prixVente:parseFloat(document.getElementById('p-vente').value)||0,quantiteStock:parseInt(document.getElementById('p-qty').value)||0,seuilAlerte:parseInt(document.getElementById('p-seuil').value)||5,fournisseur:''});
-  save('stock',stock);
-  closeModal('modalPiece');
-  ['p-ref','p-nom','p-cat','p-achat','p-vente'].forEach(id=>document.getElementById(id).value='');
-  notif('Pièce ajoutée ✓');
-  renderPage('stock');
-}
-
-function calcDevTTC() {
-  const ht=parseFloat(document.getElementById('dev-ht').value)||0;
+function calcDevTTC(){
+  var ht=parseFloat(document.getElementById('dev-ht').value)||0;
   document.getElementById('dev-ttc').value=fmtCur(ht*1.2);
 }
-function saveDevis() {
-  const clientId=document.getElementById('dev-client').value;
-  const ht=parseFloat(document.getElementById('dev-ht').value)||0;
-  if(!clientId) { alert('Client obligatoire'); return; }
-  const clients=load('clients');
-  const client=clients.find(c=>c.id===clientId)||{prenom:'',nom:''};
-  const devis=load('devis');
-  devis.unshift({id:uid(),numero:num('DEV'),clientId,clientNom:client.prenom+' '+client.nom,vehicule:document.getElementById('dev-vehicule').value,montantHT:ht,montantTTC:ht*1.2,statut:'EN_ATTENTE',dateEmission:new Date().toISOString()});
+function saveDevis(){
+  var clientId=document.getElementById('dev-client').value;
+  var ht=parseFloat(document.getElementById('dev-ht').value)||0;
+  if(!clientId){alert('Client obligatoire');return;}
+  var clients=load('clients');
+  var client=clients.find(function(c){return c.id===clientId;})||{prenom:'',nom:''};
+  var devis=load('devis');
+  devis.unshift({id:uid(),numero:numGen('DEV'),clientId:clientId,clientNom:client.prenom+' '+client.nom,vehicule:document.getElementById('dev-vehicule').value,montantHT:ht,montantTTC:ht*1.2,statut:'EN_ATTENTE',dateEmission:new Date().toISOString()});
   save('devis',devis);
-  closeModal('modalDevis');
-  notif('Devis créé ✓');
-  renderPage('devis');
+  notif('Devis cree');
+  hideForm('devis');
 }
 
-function savePersonnel() {
-  const prenom=document.getElementById('per-prenom').value.trim();
-  const nom=document.getElementById('per-nom').value.trim();
-  if(!prenom||!nom) { alert('Prénom et nom obligatoires'); return; }
-  const personnel=load('personnel');
-  personnel.unshift({id:uid(),prenom,nom,poste:document.getElementById('per-poste').value,telephone:document.getElementById('per-tel').value,salaire:parseFloat(document.getElementById('per-salaire').value)||0,actif:true,ordres:0});
+function saveJournal(){
+  var journal=load('journal');
+  var added=0;
+  for(var i=0;i<jLineCount;i++){
+    var row=document.getElementById('jl-'+i);
+    if(!row)continue;
+    var lib=(document.getElementById('jl-lib-'+i)||{}).value||'';
+    var mont=parseFloat((document.getElementById('jl-mont-'+i)||{}).value)||0;
+    if(!lib.trim()||!mont)continue;
+    journal.unshift({
+      id:uid(),
+      type:(document.getElementById('jl-sens-'+i)||{}).value||'ENTREE',
+      compte:(document.getElementById('jl-compte-'+i)||{}).value||'Caisse',
+      categorie:(document.getElementById('jl-cat-'+i)||{}).value||'',
+      libelle:lib.trim(),
+      montant:mont,
+      date:(document.getElementById('jl-date-'+i)||{}).value||today(),
+      reference:(document.getElementById('jl-ref-'+i)||{}).value||''
+    });
+    added++;
+  }
+  if(!added){alert('Aucune ligne valide (libelle et montant requis)');return;}
+  save('journal',journal);
+  notif(added+' operation(s) enregistree(s)');
+  hideForm('journal');
+}
+
+function saveCharge(){
+  var libelle=document.getElementById('ch-libelle').value.trim();
+  var montant=parseFloat(document.getElementById('ch-montant').value)||0;
+  if(!libelle||!montant){alert('Libelle et montant sont obligatoires');return;}
+  var period=document.querySelector('input[name="ch-period"]:checked');
+  var periodicite=period?period.value:'MENSUELLE';
+  var charges=load('charges');
+  charges.unshift({id:uid(),libelle:libelle,categorie:document.getElementById('ch-cat').value,montant:montant,date:document.getElementById('ch-date').value||today(),periodicite:periodicite});
+  save('charges',charges);
+  ['ch-libelle','ch-montant'].forEach(function(id){document.getElementById(id).value='';});
+  notif('Charge enregistree');
+  hideForm('charges');
+}
+
+function savePiece(){
+  var ref=document.getElementById('p-ref').value.trim();
+  var nom=document.getElementById('p-nom').value.trim();
+  if(!ref||!nom){alert('Reference et designation sont obligatoires');return;}
+  var stock=load('stock');
+  stock.unshift({id:uid(),reference:ref,nom:nom,categorie:document.getElementById('p-cat').value,prixAchat:parseFloat(document.getElementById('p-achat').value)||0,prixVente:parseFloat(document.getElementById('p-vente').value)||0,quantiteStock:parseInt(document.getElementById('p-qty').value)||0,seuilAlerte:parseInt(document.getElementById('p-seuil').value)||5,fournisseur:''});
+  save('stock',stock);
+  ['p-ref','p-nom','p-cat','p-achat','p-vente'].forEach(function(id){document.getElementById(id).value='';});
+  notif('Piece ajoutee');
+  hideForm('stock');
+}
+
+function savePersonnel(){
+  var prenom=document.getElementById('per-prenom').value.trim();
+  var nom=document.getElementById('per-nom').value.trim();
+  if(!prenom||!nom){alert('Prenom et nom obligatoires');return;}
+  var personnel=load('personnel');
+  personnel.unshift({id:uid(),prenom:prenom,nom:nom,poste:document.getElementById('per-poste').value,telephone:document.getElementById('per-tel').value,salaire:parseFloat(document.getElementById('per-salaire').value)||0,actif:true,ordres:0});
   save('personnel',personnel);
-  closeModal('modalPersonnel');
-  notif('Employé ajouté ✓');
-  renderPage('personnel');
+  notif('Employe ajoute');
+  hideForm('personnel');
 }
 
-function saveFournisseur() {
-  const nom=document.getElementById('fo-nom').value.trim();
-  if(!nom) { alert('Nom obligatoire'); return; }
-  const fournisseurs=load('fournisseurs');
-  fournisseurs.unshift({id:uid(),nom,telephone:document.getElementById('fo-tel').value,email:document.getElementById('fo-email').value,contact:document.getElementById('fo-contact').value,pieces:0});
+function saveFournisseur(){
+  var nom=document.getElementById('fo-nom').value.trim();
+  if(!nom){alert('Nom obligatoire');return;}
+  var fournisseurs=load('fournisseurs');
+  fournisseurs.unshift({id:uid(),nom:nom,telephone:document.getElementById('fo-tel').value,email:document.getElementById('fo-email').value,contact:document.getElementById('fo-contact').value,pieces:0});
   save('fournisseurs',fournisseurs);
-  closeModal('modalFournisseur');
-  notif('Fournisseur ajouté ✓');
-  renderPage('fournisseurs');
+  notif('Fournisseur ajoute');
+  hideForm('fournisseurs');
 }
 
-function saveLivraison() {
-  const nom=document.getElementById('li-nom').value.trim();
-  const tel=document.getElementById('li-tel').value.trim();
-  if(!nom||!tel) { alert('Nom et téléphone obligatoires'); return; }
-  const livraisons=load('livraisons');
-  livraisons.unshift({id:uid(),numero:num('LIV'),clientNom:nom,clientTel:tel,vehiculeInfo:document.getElementById('li-vehicule').value,adresse:document.getElementById('li-adresse').value,datePrevu:document.getElementById('li-date').value,statut:'EN_ATTENTE'});
+function saveLivraison(){
+  var nom=document.getElementById('li-nom').value.trim();
+  var tel=document.getElementById('li-tel').value.trim();
+  if(!nom||!tel){alert('Nom et telephone obligatoires');return;}
+  var livraisons=load('livraisons');
+  livraisons.unshift({id:uid(),numero:numGen('LIV'),clientNom:nom,clientTel:tel,vehiculeInfo:document.getElementById('li-vehicule').value,adresse:document.getElementById('li-adresse').value,datePrevu:document.getElementById('li-date').value,statut:'EN_ATTENTE'});
   save('livraisons',livraisons);
-  closeModal('modalLivraison');
-  notif('Livraison créée ✓');
-  renderPage('livraisons');
+  notif('Livraison creee');
+  hideForm('livraisons');
 }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-const STATUT_ORDRE={EN_ATTENTE:'<span class="badge badge-warning">En attente</span>',EN_COURS:'<span class="badge badge-info">En cours</span>',TERMINE:'<span class="badge badge-success">Terminé</span>',LIVRE:'<span class="badge badge-success">Livré</span>'};
-const STATUT_FACTURE={EN_ATTENTE:'<span class="badge badge-warning">En attente</span>',PAYEE:'<span class="badge badge-success">Payée</span>',ANNULEE:'<span class="badge badge-danger">Annulée</span>'};
-const STATUT_DEVIS={EN_ATTENTE:'<span class="badge badge-warning">En attente</span>',ACCEPTE:'<span class="badge badge-success">Accepté</span>',REFUSE:'<span class="badge badge-danger">Refusé</span>'};
-const STATUT_LIV={EN_ATTENTE:'<span class="badge badge-warning">En attente</span>',EN_COURS:'<span class="badge badge-info">En cours</span>',LIVRE:'<span class="badge badge-success">Livré</span>',ANNULE:'<span class="badge badge-danger">Annulé</span>'};
+// ─── RENDER ─────────────────────────────────────────────────────────────────
+var SO={EN_ATTENTE:'<span class="badge badge-warning">En attente</span>',EN_COURS:'<span class="badge badge-info">En cours</span>',TERMINE:'<span class="badge badge-success">Termine</span>',LIVRE:'<span class="badge badge-success">Livre</span>'};
+var SF={EN_ATTENTE:'<span class="badge badge-warning">En attente</span>',PAYEE:'<span class="badge badge-success">Payee</span>',ANNULEE:'<span class="badge badge-danger">Annulee</span>'};
+var SD={EN_ATTENTE:'<span class="badge badge-warning">En attente</span>',ACCEPTE:'<span class="badge badge-success">Accepte</span>',REFUSE:'<span class="badge badge-danger">Refuse</span>'};
+var SL={EN_ATTENTE:'<span class="badge badge-warning">En attente</span>',EN_COURS:'<span class="badge badge-info">En cours</span>',LIVRE:'<span class="badge badge-success">Livre</span>',ANNULE:'<span class="badge badge-danger">Annule</span>'};
 
-function empty(msg) { return `<tr><td colspan="10" style="text-align:center;padding:48px;color:#9ca3af;font-size:14px;">${msg}</td></tr>`; }
-
-function renderPage(id) {
-  if(id==='dashboard') renderDashboard();
-  else if(id==='clients') renderClients();
-  else if(id==='vehicules') renderVehicules();
-  else if(id==='ordres') renderOrdres();
-  else if(id==='factures') renderFactures();
-  else if(id==='devis') renderDevis();
-  else if(id==='stock') renderStock();
-  else if(id==='journal') renderJournal();
-  else if(id==='charges') renderCharges();
-  else if(id==='livraisons') renderLivraisons();
-  else if(id==='personnel') renderPersonnel();
-  else if(id==='fournisseurs') renderFournisseurs();
+function renderPage(id){
+  if(id==='dashboard')renderDashboard();
+  else if(id==='clients')renderClients();
+  else if(id==='vehicules')renderVehicules();
+  else if(id==='ordres')renderOrdres();
+  else if(id==='factures')renderFactures();
+  else if(id==='devis')renderDevis();
+  else if(id==='stock')renderStock();
+  else if(id==='journal')renderJournal();
+  else if(id==='charges')renderCharges();
+  else if(id==='livraisons')renderLivraisons();
+  else if(id==='personnel')renderPersonnel();
+  else if(id==='fournisseurs')renderFournisseurs();
+  else if(id==='dossiers')renderDossiers();
 }
 
-function renderDashboard() {
-  const clients=load('clients'); const vehicules=load('vehicules'); const ordres=load('ordres'); const factures=load('factures');
+function renderDashboard(){
+  var clients=load('clients');var vehicules=load('vehicules');var ordres=load('ordres');var factures=load('factures');
   document.getElementById('kpi-clients').textContent=clients.length;
   document.getElementById('kpi-vehicules').textContent=vehicules.length;
-  document.getElementById('kpi-encours').textContent=ordres.filter(o=>o.statut==='EN_COURS').length;
-  document.getElementById('kpi-attente').textContent=ordres.filter(o=>o.statut==='EN_ATTENTE').length;
-  document.getElementById('kpi-impaye').textContent=factures.filter(f=>f.statut==='EN_ATTENTE').length;
-  const payees=factures.filter(f=>f.statut==='PAYEE'); 
-  document.getElementById('kpi-ca').textContent=fmtCur(payees.reduce((s,f)=>s+f.montantTTC,0));
-  const recent=ordres.slice(0,6);
-  document.getElementById('dash-ordres').innerHTML=recent.length?recent.map(o=>`<div style="display:flex;align-items:center;gap:16px;padding:14px 24px;border-bottom:1px solid #f0f2f7;"><div style="width:32px;height:32px;background:#eef3ff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#3b82f6" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg></div><div style="flex:1;"><p style="font-size:14px;font-weight:500;color:#1e2433;">${o.vehiculeInfo}</p><p style="font-size:12px;color:#9ca3af;">${o.numero} · ${o.services.slice(0,2).join(', ')}</p></div>${STATUT_ORDRE[o.statut]||''}<span style="font-size:12px;color:#9ca3af;margin-left:8px;">${fmtDate(o.dateEntree)}</span></div>`).join('')+`<div style="height:4px;"></div>`:`<div style="padding:40px;text-align:center;color:#9ca3af;font-size:14px;">Aucun ordre pour l'instant</div>`;
+  document.getElementById('kpi-encours').textContent=ordres.filter(function(o){return o.statut==='EN_COURS';}).length;
+  document.getElementById('kpi-attente').textContent=ordres.filter(function(o){return o.statut==='EN_ATTENTE';}).length;
+  document.getElementById('kpi-impaye').textContent=factures.filter(function(f){return f.statut==='EN_ATTENTE';}).length;
+  var payees=factures.filter(function(f){return f.statut==='PAYEE';});
+  document.getElementById('kpi-ca').textContent=fmtCur(payees.reduce(function(s,f){return s+f.montantTTC;},0));
+  var recent=ordres.slice(0,6);
+  document.getElementById('dash-ordres').innerHTML=recent.length?recent.map(function(o){
+    return '<div style="display:flex;align-items:center;gap:16px;padding:13px 20px;border-bottom:1px solid #f0f2f7;">'
+      +'<div style="flex:1;"><p style="font-size:14px;font-weight:500;">'+o.vehiculeInfo+'</p>'
+      +'<p style="font-size:12px;color:#9ca3af;">'+o.numero+' · '+(o.services||[]).slice(0,2).join(', ')+'</p></div>'
+      +(SO[o.statut]||'')
+      +'<span style="font-size:12px;color:#9ca3af;margin-left:8px;">'+fmtDate(o.dateEntree)+'</span></div>';
+  }).join(''):'<div style="padding:40px;text-align:center;color:#9ca3af;font-size:14px;">Aucun ordre pour linstant</div>';
 }
 
-function renderClients() {
-  const clients=load('clients');
-  document.getElementById('sub-clients').textContent=clients.length+' client(s)';
-  document.getElementById('tbl-clients').innerHTML=clients.length?clients.map(c=>`<tr><td><span style="font-weight:500;color:#1e2433;">${c.prenom} ${c.nom}</span></td><td style="color:#6b7280;">${c.telephone}</td><td style="color:#6b7280;">${c.email||'—'}</td><td style="color:#6b7280;">${c.ville||'—'}</td><td style="font-weight:500;">${c.vehicules||0}</td><td style="color:#9ca3af;">${fmtDate(c.createdAt)}</td></tr>`).join(''):empty('Aucun client — cliquez sur Nouveau client');
+function renderClients(){
+  var clients=load('clients');
+  var el=document.getElementById('sub-clients');if(el)el.textContent=clients.length+' client(s)';
+  document.getElementById('tbl-clients').innerHTML=clients.length?clients.map(function(c){
+    return '<tr><td><span style="font-weight:500;">'+c.prenom+' '+c.nom+'</span></td><td style="color:#6b7280;">'+c.telephone+'</td><td style="color:#6b7280;">'+(c.email||'—')+'</td><td style="color:#6b7280;">'+(c.ville||'—')+'</td><td style="font-weight:500;">'+(c.vehicules||0)+'</td><td style="color:#9ca3af;">'+fmtDate(c.createdAt)+'</td></tr>';
+  }).join(''):empty('Aucun client — cliquez sur Nouveau client');
 }
 
-function renderVehicules() {
-  const vehicules=load('vehicules');
-  document.getElementById('sub-vehicules').textContent=vehicules.length+' véhicule(s)';
-  document.getElementById('tbl-vehicules').innerHTML=vehicules.length?vehicules.map(v=>`<tr><td><span style="font-family:monospace;font-weight:700;color:#1e2433;">${v.immatriculation}</span></td><td><div style="font-weight:500;color:#1e2433;">${v.marque} ${v.modele}</div><div style="font-size:12px;color:#9ca3af;">${v.annee} · ${v.couleur||'—'}</div></td><td style="color:#6b7280;">${v.annee}</td><td style="color:#6b7280;">${v.carburant||'—'}</td><td style="color:#3b82f6;">${v.clientNom||'—'}</td><td style="font-weight:500;">${v.ordres||0}</td></tr>`).join(''):empty('Aucun véhicule — cliquez sur Nouveau véhicule');
+function renderVehicules(){
+  var vehicules=load('vehicules');
+  var el=document.getElementById('sub-vehicules');if(el)el.textContent=vehicules.length+' vehicule(s)';
+  document.getElementById('tbl-vehicules').innerHTML=vehicules.length?vehicules.map(function(v){
+    return '<tr><td><span style="font-family:monospace;font-weight:700;color:#1e2433;">'+v.immatriculation+'</span></td>'
+      +'<td><div style="font-weight:500;">'+v.marque+' '+v.modele+'</div><div style="font-size:12px;color:#9ca3af;">'+v.annee+' · '+(v.couleur||'—')+'</div></td>'
+      +'<td style="color:#6b7280;">'+v.annee+'</td><td style="color:#6b7280;">'+(v.carburant||'—')+'</td>'
+      +'<td style="color:#3b82f6;">'+(v.clientNom||'—')+'</td><td style="font-weight:500;">'+(v.ordres||0)+'</td></tr>';
+  }).join(''):empty('Aucun vehicule');
 }
 
-function renderOrdres() {
-  const ordres=load('ordres');
-  document.getElementById('sub-ordres').textContent=ordres.length+' ordre(s)';
-  document.getElementById('tbl-ordres').innerHTML=ordres.length?ordres.map(o=>`<tr><td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">${o.numero}</span></td><td style="font-weight:500;color:#1e2433;">—</td><td style="color:#6b7280;">${o.vehiculeInfo}</td><td>${(o.services||[]).slice(0,2).map(s=>`<span style="font-size:11px;background:#eef3ff;color:#3b82f6;padding:2px 8px;border-radius:99px;margin-right:4px;">${s}</span>`).join('')}</td><td style="color:#6b7280;">${o.technicien||'—'}</td><td style="color:#6b7280;">${fmtDate(o.dateEntree)}</td><td>${STATUT_ORDRE[o.statut]||''}</td></tr>`).join(''):empty('Aucun ordre — cliquez sur Nouvel ordre');
+function renderOrdres(){
+  var ordres=load('ordres');
+  var el=document.getElementById('sub-ordres');if(el)el.textContent=ordres.length+' ordre(s)';
+  document.getElementById('tbl-ordres').innerHTML=ordres.length?ordres.map(function(o){
+    return '<tr><td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">'+o.numero+'</span></td>'
+      +'<td style="color:#6b7280;">'+o.vehiculeInfo+'</td>'
+      +'<td>'+(o.services||[]).slice(0,2).map(function(s){return '<span style="font-size:11px;background:#eef3ff;color:#3b82f6;padding:2px 8px;border-radius:99px;margin-right:4px;">'+s+'</span>';}).join('')+'</td>'
+      +'<td style="color:#6b7280;">'+(o.technicien||'—')+'</td>'
+      +'<td style="color:#6b7280;">'+fmtDate(o.dateEntree)+'</td>'
+      +'<td>'+(SO[o.statut]||'')+'</td></tr>';
+  }).join(''):empty('Aucun ordre');
 }
 
-function renderFactures() {
-  const factures=load('factures');
-  const imp=factures.filter(f=>f.statut==='EN_ATTENTE').reduce((s,f)=>s+f.montantTTC,0);
-  document.getElementById('sub-factures').textContent=factures.length+' facture(s) · '+fmtCur(imp)+' impayé';
-  document.getElementById('tbl-factures').innerHTML=factures.length?factures.map(f=>`<tr><td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">${f.numero}</span></td><td style="font-weight:500;color:#1e2433;">${f.clientNom||'—'}</td><td style="color:#6b7280;">${fmtDate(f.dateEmission)}</td><td style="font-weight:600;color:#1e2433;text-align:right;">${fmtCur(f.montantTTC)}</td><td>${STATUT_FACTURE[f.statut]||''}</td></tr>`).join(''):empty('Aucune facture — cliquez sur Nouvelle facture');
+function renderFactures(){
+  var factures=load('factures');
+  var imp=factures.filter(function(f){return f.statut==='EN_ATTENTE';}).reduce(function(s,f){return s+f.montantTTC;},0);
+  var el=document.getElementById('sub-factures');if(el)el.textContent=factures.length+' facture(s) · '+fmtCur(imp)+' impaye';
+  document.getElementById('tbl-factures').innerHTML=factures.length?factures.map(function(f){
+    return '<tr><td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">'+f.numero+'</span></td>'
+      +'<td style="font-weight:500;">'+(f.clientNom||'—')+'</td>'
+      +'<td style="color:#6b7280;">'+fmtDate(f.dateEmission)+'</td>'
+      +'<td style="font-weight:600;text-align:right;">'+fmtCur(f.montantTTC)+'</td>'
+      +'<td>'+(SF[f.statut]||'')+'</td></tr>';
+  }).join(''):empty('Aucune facture');
 }
 
-function renderDevis() {
-  const devis=load('devis');
-  document.getElementById('tbl-devis').innerHTML=devis.length?devis.map(d=>`<tr><td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">${d.numero}</span></td><td style="font-weight:500;">${d.clientNom||'—'}</td><td style="color:#6b7280;">${d.vehicule||'—'}</td><td style="color:#6b7280;">${fmtDate(d.dateEmission)}</td><td style="font-weight:600;">${fmtCur(d.montantTTC)}</td><td>${STATUT_DEVIS[d.statut]||''}</td></tr>`).join(''):empty('Aucun devis');
+function renderDevis(){
+  var devis=load('devis');
+  document.getElementById('tbl-devis').innerHTML=devis.length?devis.map(function(d){
+    return '<tr><td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">'+d.numero+'</span></td>'
+      +'<td style="font-weight:500;">'+(d.clientNom||'—')+'</td>'
+      +'<td style="color:#6b7280;">'+(d.vehicule||'—')+'</td>'
+      +'<td style="color:#6b7280;">'+fmtDate(d.dateEmission)+'</td>'
+      +'<td style="font-weight:600;">'+fmtCur(d.montantTTC)+'</td>'
+      +'<td>'+(SD[d.statut]||'')+'</td></tr>';
+  }).join(''):empty('Aucun devis');
 }
 
-function renderStock() {
-  const stock=load('stock');
-  const alertes=stock.filter(p=>p.quantiteStock<=p.seuilAlerte);
-  const el=document.getElementById('stock-alerte');
-  if(alertes.length){el.style.display='flex';el.textContent='⚠ '+alertes.length+' pièce(s) en dessous du seuil d\'alerte';}else{el.style.display='none';}
-  document.getElementById('sub-stock').textContent=stock.length+' référence(s) · '+alertes.length+' alerte(s)';
-  document.getElementById('tbl-stock').innerHTML=stock.length?stock.map(p=>{
-    const low=p.quantiteStock<=p.seuilAlerte;
-    return `<tr style="${low?'background:#fff9f9':''}"><td><span style="font-family:monospace;font-size:12px;color:#6b7280;">${p.reference}</span></td><td><div style="font-weight:500;color:#1e2433;">${p.nom}</div><div style="font-size:12px;color:#9ca3af;">${p.categorie}</div></td><td style="color:#6b7280;">${p.fournisseur||'—'}</td><td style="font-weight:700;color:${low?'#f43f5e':'#10b981'};">${p.quantiteStock}</td><td style="color:#9ca3af;">${p.seuilAlerte}</td><td style="color:#6b7280;">${fmtCur(p.prixAchat)}</td><td style="font-weight:500;">${fmtCur(p.prixVente)}</td><td><span class="badge ${low?'badge-danger':'badge-success'}">${low?'Stock bas':'OK'}</span></td></tr>`;
-  }).join(''):empty('Stock vide — cliquez sur Nouvelle pièce');
+function renderStock(){
+  var stock=load('stock');
+  var alertes=stock.filter(function(p){return p.quantiteStock<=p.seuilAlerte;});
+  var el=document.getElementById('stock-alerte');
+  if(alertes.length){el.style.display='flex';el.textContent=alertes.length+' piece(s) en dessous du seuil alerte';}else{el.style.display='none';}
+  var el2=document.getElementById('sub-stock');if(el2)el2.textContent=stock.length+' reference(s) · '+alertes.length+' alerte(s)';
+  document.getElementById('tbl-stock').innerHTML=stock.length?stock.map(function(p){
+    var low=p.quantiteStock<=p.seuilAlerte;
+    return '<tr style="'+(low?'background:#fff9f9':'')+'"><td><span style="font-family:monospace;font-size:12px;color:#6b7280;">'+p.reference+'</span></td>'
+      +'<td><div style="font-weight:500;">'+p.nom+'</div><div style="font-size:12px;color:#9ca3af;">'+p.categorie+'</div></td>'
+      +'<td style="color:#6b7280;">'+(p.fournisseur||'—')+'</td>'
+      +'<td style="font-weight:700;color:'+(low?'#f43f5e':'#10b981')+';">'+p.quantiteStock+'</td>'
+      +'<td style="color:#9ca3af;">'+p.seuilAlerte+'</td>'
+      +'<td style="color:#6b7280;">'+fmtCur(p.prixAchat)+'</td>'
+      +'<td style="font-weight:500;">'+fmtCur(p.prixVente)+'</td>'
+      +'<td><span class="badge '+(low?'badge-danger':'badge-success')+'">'+(low?'Stock bas':'OK')+'</span></td></tr>';
+  }).join(''):empty('Stock vide');
 }
 
-function renderJournal() {
-  const journal=load('journal');
-  const ent=journal.filter(e=>e.type==='ENTREE').reduce((s,e)=>s+e.montant,0);
-  const sor=journal.filter(e=>e.type==='SORTIE').reduce((s,e)=>s+e.montant,0);
-  document.getElementById('j-entrees').textContent=fmtCur(ent);
-  document.getElementById('j-sorties').textContent=fmtCur(sor);
-  document.getElementById('j-solde').textContent=fmtCur(ent-sor);
-  document.getElementById('tbl-journal').innerHTML=journal.length?journal.map(e=>`<tr><td style="color:#6b7280;">${fmtDate(e.date)}</td><td><span class="badge ${e.type==='ENTREE'?'badge-success':'badge-danger'}">${e.type==='ENTREE'?'↑ Entrée':'↓ Sortie'}</span></td><td><span style="font-size:12px;background:#f5f3ff;color:#7c3aed;padding:2px 8px;border-radius:99px;font-weight:500;">${e.compte}</span></td><td style="color:#6b7280;">${e.categorie}</td><td style="font-weight:500;color:#1e2433;">${e.libelle}</td><td style="font-family:monospace;font-size:12px;color:#9ca3af;">${e.reference||'—'}</td><td style="text-align:right;font-weight:700;color:${e.type==='ENTREE'?'#10b981':'#f43f5e'};">${e.type==='ENTREE'?'+':'−'}${fmtCur(e.montant)}</td></tr>`).join(''):empty('Aucune opération — cliquez sur Nouvelle opération');
+function renderJournal(){
+  var journal=load('journal');
+  var caisseEnt=0,caisseSort=0,banqueEnt=0,banqueSort=0;
+  journal.forEach(function(e){
+    var isCaisse=e.compte==='Caisse';
+    if(e.type==='ENTREE'){if(isCaisse)caisseEnt+=e.montant;else banqueEnt+=e.montant;}
+    else{if(isCaisse)caisseSort+=e.montant;else banqueSort+=e.montant;}
+  });
+  var soldeCaisse=caisseEnt-caisseSort;
+  var soldeBanque=banqueEnt-banqueSort;
+  document.getElementById('j-caisse').textContent=fmtCur(soldeCaisse);
+  document.getElementById('j-banque').textContent=fmtCur(soldeBanque);
+  document.getElementById('j-total').textContent=fmtCur(soldeCaisse+soldeBanque);
+  document.getElementById('tbl-journal').innerHTML=journal.length?journal.map(function(e){
+    var isCaisse=e.compte==='Caisse';
+    return '<tr>'
+      +'<td style="color:#6b7280;">'+fmtDate(e.date)+'</td>'
+      +'<td><span style="font-size:12px;background:'+(isCaisse?'#f5f3ff':'#eef3ff')+';color:'+(isCaisse?'#7c3aed':'#3b82f6')+';padding:2px 8px;border-radius:99px;font-weight:500;">'+e.compte+'</span></td>'
+      +'<td><span class="badge '+(e.type==='ENTREE'?'badge-success':'badge-danger')+'">'+(e.type==='ENTREE'?'Entree':'Sortie')+'</span></td>'
+      +'<td style="color:#6b7280;">'+(e.categorie||'—')+'</td>'
+      +'<td style="font-weight:500;">'+e.libelle+'</td>'
+      +'<td style="font-family:monospace;font-size:12px;color:#9ca3af;">'+(e.reference||'—')+'</td>'
+      +'<td style="text-align:right;font-weight:700;color:'+(e.type==='ENTREE'?'#10b981':'#f43f5e')+';">'+(e.type==='ENTREE'?'+':'−')+fmtCur(e.montant)+'</td></tr>';
+  }).join(''):empty('Aucune operation');
 }
 
-function renderCharges() {
-  const charges=load('charges');
-  const byC={}; charges.forEach(c=>{byC[c.categorie]=(byC[c.categorie]||0)+c.montant;});
-  document.getElementById('cats-charges').innerHTML=Object.keys(byC).length?Object.entries(byC).map(([cat,tot])=>`<div class="kpi-card"><p style="font-size:11px;color:#9ca3af;font-weight:600;text-transform:uppercase;">${cat}</p><p style="font-size:20px;font-weight:700;color:#f43f5e;margin-top:4px;">${fmtCur(tot)}</p></div>`).join(''):'';
-  document.getElementById('tbl-charges').innerHTML=charges.length?charges.map(c=>`<tr><td style="color:#6b7280;">${fmtDate(c.date)}</td><td style="font-weight:500;color:#1e2433;">${c.libelle}</td><td><span style="font-size:12px;background:#f5f3ff;color:#7c3aed;padding:2px 8px;border-radius:99px;font-weight:500;">${c.categorie}</span></td><td style="text-align:right;font-weight:700;color:#f43f5e;">${fmtCur(c.montant)}</td><td style="color:#9ca3af;font-size:12px;">${c.recurrente?'Récurrente':'Ponctuelle'}</td></tr>`).join(''):empty('Aucune charge — cliquez sur Ajouter une charge');
+function renderCharges(){
+  var charges=load('charges');
+  var men=charges.filter(function(c){return c.periodicite==='MENSUELLE'||!c.periodicite;});
+  var ann=charges.filter(function(c){return c.periodicite==='ANNUELLE';});
+  document.getElementById('ch-total-men').textContent=fmtCur(men.reduce(function(s,c){return s+c.montant;},0));
+  document.getElementById('ch-total-ann').textContent=fmtCur(ann.reduce(function(s,c){return s+c.montant;},0));
+  var rowHTML=function(c){return '<tr><td style="color:#6b7280;">'+fmtDate(c.date)+'</td><td style="font-weight:500;">'+c.libelle+'</td><td><span style="font-size:12px;background:#f5f3ff;color:#7c3aed;padding:2px 8px;border-radius:99px;font-weight:500;">'+c.categorie+'</span></td><td style="text-align:right;font-weight:700;color:#f43f5e;">'+fmtCur(c.montant)+'</td></tr>';};
+  document.getElementById('tbl-charges-men').innerHTML=men.length?men.map(rowHTML).join(''):empty('Aucune charge mensuelle');
+  document.getElementById('tbl-charges-ann').innerHTML=ann.length?ann.map(rowHTML).join(''):empty('Aucune charge annuelle');
 }
 
-function renderLivraisons() {
-  const livraisons=load('livraisons');
-  document.getElementById('tbl-livraisons').innerHTML=livraisons.length?livraisons.map(l=>`<tr><td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">${l.numero}</span></td><td><div style="font-weight:500;color:#1e2433;">${l.clientNom}</div><div style="font-size:12px;color:#9ca3af;">${l.clientTel}</div></td><td style="color:#6b7280;">${l.vehiculeInfo||'—'}</td><td style="color:#6b7280;">${l.adresse||'—'}</td><td style="color:#6b7280;">${fmtDate(l.datePrevu)}</td><td>${STATUT_LIV[l.statut]||''}</td></tr>`).join(''):empty('Aucune livraison');
+function renderLivraisons(){
+  var livraisons=load('livraisons');
+  document.getElementById('tbl-livraisons').innerHTML=livraisons.length?livraisons.map(function(l){
+    return '<tr><td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">'+l.numero+'</span></td>'
+      +'<td><div style="font-weight:500;">'+l.clientNom+'</div><div style="font-size:12px;color:#9ca3af;">'+l.clientTel+'</div></td>'
+      +'<td style="color:#6b7280;">'+(l.vehiculeInfo||'—')+'</td>'
+      +'<td style="color:#6b7280;">'+(l.adresse||'—')+'</td>'
+      +'<td style="color:#6b7280;">'+fmtDate(l.datePrevu)+'</td>'
+      +'<td>'+(SL[l.statut]||'')+'</td></tr>';
+  }).join(''):empty('Aucune livraison');
 }
 
-function renderPersonnel() {
-  const personnel=load('personnel');
-  document.getElementById('tbl-personnel').innerHTML=personnel.length?personnel.map(p=>`<tr><td><div style="font-weight:500;color:#1e2433;">${p.prenom} ${p.nom}</div></td><td><span style="font-size:12px;background:#eef3ff;color:#3b82f6;padding:2px 8px;border-radius:99px;font-weight:500;">${p.poste}</span></td><td style="color:#6b7280;">${p.telephone||'—'}</td><td style="font-weight:500;">${p.salaire?fmtCur(p.salaire):'—'}</td><td style="font-weight:500;">${p.ordres||0}</td><td><span class="badge badge-success">Actif</span></td></tr>`).join(''):empty('Aucun employé');
+function renderPersonnel(){
+  var personnel=load('personnel');
+  document.getElementById('tbl-personnel').innerHTML=personnel.length?personnel.map(function(p){
+    return '<tr><td><div style="font-weight:500;">'+p.prenom+' '+p.nom+'</div></td>'
+      +'<td><span style="font-size:12px;background:#eef3ff;color:#3b82f6;padding:2px 8px;border-radius:99px;font-weight:500;">'+p.poste+'</span></td>'
+      +'<td style="color:#6b7280;">'+(p.telephone||'—')+'</td>'
+      +'<td style="font-weight:500;">'+(p.salaire?fmtCur(p.salaire):'—')+'</td>'
+      +'<td style="font-weight:500;">'+(p.ordres||0)+'</td>'
+      +'<td><span class="badge badge-success">Actif</span></td></tr>';
+  }).join(''):empty('Aucun employe');
 }
 
-function renderFournisseurs() {
-  const fournisseurs=load('fournisseurs');
-  document.getElementById('tbl-fournisseurs').innerHTML=fournisseurs.length?fournisseurs.map(f=>`<tr><td style="font-weight:500;color:#1e2433;">${f.nom}</td><td style="color:#6b7280;">${f.telephone||'—'}</td><td style="color:#6b7280;">${f.email||'—'}</td><td style="color:#6b7280;">${f.contact||'—'}</td><td style="font-weight:500;">${f.pieces||0}</td></tr>`).join(''):empty('Aucun fournisseur');
+function renderFournisseurs(){
+  var fournisseurs=load('fournisseurs');
+  document.getElementById('tbl-fournisseurs').innerHTML=fournisseurs.length?fournisseurs.map(function(f){
+    return '<tr><td style="font-weight:500;">'+f.nom+'</td>'
+      +'<td style="color:#6b7280;">'+(f.telephone||'—')+'</td>'
+      +'<td style="color:#6b7280;">'+(f.email||'—')+'</td>'
+      +'<td style="color:#6b7280;">'+(f.contact||'—')+'</td>'
+      +'<td style="font-weight:500;">'+(f.pieces||0)+'</td></tr>';
+  }).join(''):empty('Aucun fournisseur');
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('j-date').value = new Date().toISOString().split('T')[0];
+function renderDossiers(){
+  var vehicules=load('vehicules');
+  var ordres=load('ordres');
+  var el=document.getElementById('sub-dossiers');if(el)el.textContent=vehicules.length+' dossier(s)';
+  if(!vehicules.length){document.getElementById('tbl-dossiers').innerHTML=empty('Aucun vehicule enregistre');return;}
+  var rows='';
+  vehicules.forEach(function(v){
+    var vOrdres=ordres.filter(function(o){return o.vehiculeInfo&&o.vehiculeInfo.toUpperCase()===v.immatriculation;});
+    var lastOrdre=vOrdres.length?vOrdres.reduce(function(a,b){return new Date(a.dateEntree)>new Date(b.dateEntree)?a:b;}):null;
+    rows+='<tr class="dossier-row" onclick="toggleDossier(\'dos-'+v.id+'\')" style="cursor:pointer;">'
+      +'<td style="width:32px;text-align:center;"><span id="dos-arrow-'+v.id+'" style="color:#9ca3af;font-size:12px;">▶</span></td>'
+      +'<td><span style="font-family:monospace;font-weight:700;color:#3b82f6;">'+v.immatriculation+'</span></td>'
+      +'<td><div style="font-weight:500;">'+v.marque+' '+v.modele+'</div><div style="font-size:12px;color:#9ca3af;">'+v.annee+' · '+(v.couleur||'')+'</div></td>'
+      +'<td style="color:#3b82f6;">'+(v.clientNom||'—')+'</td>'
+      +'<td style="font-weight:500;">'+vOrdres.length+' intervention(s)</td>'
+      +'<td style="color:#6b7280;">'+(lastOrdre?fmtDate(lastOrdre.dateEntree):'—')+'</td>'
+      +'</tr>'
+      +'<tr id="dos-'+v.id+'" style="display:none;"><td colspan="6" style="padding:0;">'
+      +(vOrdres.length
+        ?'<div style="background:#f8f9fc;padding:12px 20px;border-top:1px solid #e8eaf0;">'
+          +'<table style="width:100%;"><thead><tr style="background:none;"><th style="padding:8px 12px;font-size:11px;color:#9ca3af;text-transform:uppercase;border-bottom:1px solid #e8eaf0;">Numero</th><th style="padding:8px 12px;font-size:11px;color:#9ca3af;text-transform:uppercase;border-bottom:1px solid #e8eaf0;">Services</th><th style="padding:8px 12px;font-size:11px;color:#9ca3af;text-transform:uppercase;border-bottom:1px solid #e8eaf0;">Technicien</th><th style="padding:8px 12px;font-size:11px;color:#9ca3af;text-transform:uppercase;border-bottom:1px solid #e8eaf0;">Date</th><th style="padding:8px 12px;font-size:11px;color:#9ca3af;text-transform:uppercase;border-bottom:1px solid #e8eaf0;">Statut</th></tr></thead><tbody>'
+          +vOrdres.map(function(o){return '<tr style="background:transparent;"><td style="padding:8px 12px;font-family:monospace;font-size:12px;color:#3b82f6;">'+o.numero+'</td><td style="padding:8px 12px;font-size:13px;">'+(o.services||[]).join(', ')+'</td><td style="padding:8px 12px;font-size:13px;color:#6b7280;">'+(o.technicien||'—')+'</td><td style="padding:8px 12px;font-size:13px;color:#6b7280;">'+fmtDate(o.dateEntree)+'</td><td style="padding:8px 12px;">'+(SO[o.statut]||'')+'</td></tr>';}).join('')
+          +'</tbody></table></div>'
+        :'<div style="padding:16px 20px;background:#f8f9fc;color:#9ca3af;font-size:13px;">Aucune intervention enregistree pour ce vehicule</div>')
+      +'</td></tr>';
+  });
+  document.getElementById('tbl-dossiers').innerHTML=rows;
+}
+
+function toggleDossier(id){
+  var row=document.getElementById(id);
+  if(!row)return;
+  var vid=id.replace('dos-','');
+  var arrow=document.getElementById('dos-arrow-'+vid);
+  if(row.style.display==='none'||row.style.display===''){
+    row.style.display='table-row';
+    if(arrow)arrow.textContent='▼';
+  }else{
+    row.style.display='none';
+    if(arrow)arrow.textContent='▶';
+  }
+}
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  var d=new Date();
+  var el=document.getElementById('todayDate');
+  if(el)el.textContent=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  open('menuDocs','chevronDocs');
+  open('menuBase','chevronBase');
   renderDashboard();
-  // Open docs menu by default
-  document.getElementById('menuDocs').classList.add('open');
-  document.getElementById('chevronDocs').classList.add('open');
-  document.getElementById('menuBase').classList.add('open');
-  document.getElementById('chevronBase').classList.add('open');
 });
 </script>
 </body>
