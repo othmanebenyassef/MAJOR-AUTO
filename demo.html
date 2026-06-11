@@ -918,7 +918,7 @@ function renderStock() {
   const stock=load('stock');
   const alertes=stock.filter(p=>p.quantiteStock<=p.seuilAlerte);
   const el=document.getElementById('stock-alerte');
-  if(alertes.length){el.style.display='flex';el.textContent='⚠ '+alertes.length+' pièce(s) en dessous du seuil d'alerte';}else{el.style.display='none';}
+  if(alertes.length){el.style.display='flex';el.textContent='⚠ '+alertes.length+' pièce(s) en dessous du seuil d’alerte';}else{el.style.display='none';}
   document.getElementById('sub-stock').textContent=stock.length+' référence(s) · '+alertes.length+' alerte(s)';
   document.getElementById('tbl-stock').innerHTML=stock.length?stock.map(p=>{
     const low=p.quantiteStock<=p.seuilAlerte;
