@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  nom       String
+  prenom    String
+  telephone String
+  email     String?
+  adresse   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  vehicules Vehicule[]
+  factures  Facture[]
+}
+
+model Vehicule {
+  id              String   @id @default(cuid())
+  immatriculation String   @unique
+  marque          String
+  modele          String
+  annee           Int
+  couleur         String?
+  kilometrage     Int?
+  vin             String?
+  carburant       String?
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id])
+  ordres          OrdreReparation[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model OrdreReparation {
+  id           String      @id @default(cuid())
+  numero       String      @unique
+  vehiculeId   String
+  vehicule     Vehicule    @relation(fields: [vehiculeId], references: [id])
+  statut       StatutOrdre @default(EN_ATTENTE)
+  typeService  String[]
+  description  String?
+  dateEntree   DateTime    @default(now())
+  dateSortie   DateTime?
+  kilometrage  Int?
+  technicienId String?
+  technicien   Personnel?  @relation(fields: [technicienId], references: [id])
+  lignes       LigneOrdre[]
+  facture      Facture?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model LigneOrdre {
+  id           String          @id @default(cuid())
+  ordreId      String
+  ordre        OrdreReparation @relation(fields: [ordreId], references: [id])
+  type         TypeLigne
+  description  String
+  quantite     Float           @default(1)
+  prixUnitaire Float
+  pieceId      String?
+  piece        PieceDetachee?  @relation(fields: [pieceId], references: [id])
+}
+
+model Facture {
+  id           String        @id @default(cuid())
+  numero       String        @unique
+  clientId     String
+  client       Client        @relation(fields: [clientId], references: [id])
+  ordreId      String?       @unique
+  ordre        OrdreReparation? @relation(fields: [ordreId], references: [id])
+  statut       StatutFacture @default(EN_ATTENTE)
+  montantHT    Float
+  tva          Float         @default(20)
+  montantTTC   Float
+  dateEmission DateTime      @default(now())
+  dateEcheance DateTime?
+  datePaiement DateTime?
+  modePaiement String?
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model PieceDetachee {
+  id            String           @id @default(cuid())
+  reference     String           @unique
+  nom           String
+  description   String?
+  categorie     String
+  quantiteStock Int              @default(0)
+  seuilAlerte   Int              @default(5)
+  prixAchat     Float
+  prixVente     Float
+  fournisseur   String?
+  emplacement   String?
+  lignes        LigneOrdre[]
+  mouvements    MouvementStock[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model MouvementStock {
+  id        String        @id @default(cuid())
+  pieceId   String
+  piece     PieceDetachee @relation(fields: [pieceId], references: [id])
+  type      TypeMouvement
+  quantite  Int
+  motif     String?
+  createdAt DateTime      @default(now())
+}
+
+model Personnel {
+  id           String            @id @default(cuid())
+  nom          String
+  prenom       String
+  poste        String
+  telephone    String?
+  email        String?
+  salaire      Float?
+  dateEmbauche DateTime?
+  actif        Boolean           @default(true)
+  ordres       OrdreReparation[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model Charge {
+  id          String          @id @default(cuid())
+  libelle     String
+  categorie   CategorieCharge
+  montant     Float
+  date        DateTime
+  recurrente  Boolean         @default(false)
+  periodicite String?
+  notes       String?
+  createdAt   DateTime        @default(now())
+}
+
+model Livraison {
+  id           String          @id @default(cuid())
+  numero       String          @unique
+  clientNom    String
+  clientTel    String
+  adresse      String
+  vehiculeInfo String
+  statut       StatutLivraison @default(EN_ATTENTE)
+  datePrevu    DateTime
+  dateReel     DateTime?
+  chauffeurId  String?
+  notes        String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+enum StatutOrdre {
+  EN_ATTENTE
+  EN_COURS
+  EN_PAUSE
+  TERMINE
+  LIVRE
+}
+
+enum StatutFacture {
+  EN_ATTENTE
+  PARTIELLEMENT_PAYEE
+  PAYEE
+  ANNULEE
+}
+
+enum TypeLigne {
+  MAIN_OEUVRE
+  PIECE
+  FORFAIT
+}
+
+enum TypeMouvement {
+  ENTREE
+  SORTIE
+  AJUSTEMENT
+}
+
+enum CategorieCharge {
+  LOYER
+  ELECTRICITE
+  EAU
+  SALAIRES
+  FOURNITURES
+  ASSURANCE
+  MAINTENANCE
+  TRANSPORT
+  AUTRE
+}
+
+enum StatutLivraison {
+  EN_ATTENTE
+  EN_COURS
+  LIVRE
+  ANNULE
+}
