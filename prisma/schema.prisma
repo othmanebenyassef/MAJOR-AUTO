@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 model Client {
@@ -42,7 +42,7 @@ model OrdreReparation {
   vehiculeId   String
   vehicule     Vehicule    @relation(fields: [vehiculeId], references: [id])
   statut       StatutOrdre @default(EN_ATTENTE)
-  typeService  String[]
+  typeService  String   @default("")
   description  String?
   dateEntree   DateTime    @default(now())
   dateSortie   DateTime?

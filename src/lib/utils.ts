@@ -28,6 +28,11 @@ export function generateNumero(prefix: string): string {
   return `${prefix}-${year}${month}-${random}`;
 }
 
+export function parseServices(typeService: string | string[]): string[] {
+  if (Array.isArray(typeService)) return typeService;
+  try { return JSON.parse(typeService); } catch { return typeService ? [typeService] : []; }
+}
+
 export const SERVICES = [
   "Carrosserie",
   "Peinture au four",

@@ -2,7 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
-import { formatDate, STATUT_ORDRE_LABELS } from "@/lib/utils";
+import { formatDate, STATUT_ORDRE_LABELS, parseServices } from "@/lib/utils";
 import { ClipboardList, Plus } from "lucide-react";
 import Link from "next/link";
 
@@ -72,11 +72,11 @@ export default async function OrdresPage() {
                       </td>
                       <td className="px-6 py-3">
                         <div className="flex flex-wrap gap-1">
-                          {o.typeService.slice(0, 2).map((s) => (
+                          {parseServices(o.typeService).slice(0, 2).map((s) => (
                             <span key={s} className="text-xs bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded">{s}</span>
                           ))}
-                          {o.typeService.length > 2 && (
-                            <span className="text-xs text-gray-400">+{o.typeService.length - 2}</span>
+                          {parseServices(o.typeService).length > 2 && (
+                            <span className="text-xs text-gray-400">+{parseServices(o.typeService).length - 2}</span>
                           )}
                         </div>
                       </td>

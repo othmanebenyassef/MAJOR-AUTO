@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       technicienId: technicienId || null,
       description,
       kilometrage,
-      typeService: services,
+      typeService: JSON.stringify(services),
     },
   });
   return NextResponse.json(ordre, { status: 201 });

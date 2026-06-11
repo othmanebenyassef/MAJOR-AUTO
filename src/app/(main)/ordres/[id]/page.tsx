@@ -2,7 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
-import { formatDate, formatCurrency, STATUT_ORDRE_LABELS } from "@/lib/utils";
+import { formatDate, formatCurrency, STATUT_ORDRE_LABELS, parseServices } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { OrdreActions } from "@/components/ordres/OrdreActions";
@@ -74,7 +74,7 @@ export default async function OrdreDetailPage({ params }: { params: Promise<{ id
             <CardHeader><CardTitle>Intervention</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
               <div className="flex flex-wrap gap-1">
-                {ordre.typeService.map((s) => (
+                {parseServices(ordre.typeService).map((s) => (
                   <span key={s} className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs">{s}</span>
                 ))}
               </div>
