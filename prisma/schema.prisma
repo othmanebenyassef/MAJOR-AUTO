@@ -6,6 +6,8 @@ datasource db {
   provider = "sqlite"
 }
 
+// ─── BASE DE DONNÉES ─────────────────────────────────────────────────────────
+
 model Client {
   id        String   @id @default(cuid())
   nom       String
@@ -13,10 +15,17 @@ model Client {
   telephone String
   email     String?
   adresse   String?
+  ville     String?
+  ice       String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  vehicules Vehicule[]
-  factures  Facture[]
+
+  vehicules    Vehicule[]
+  factures     Facture[]
+  devis        Devis[]
+  ordres       OrdreReparation[]
+  bonsCommande BonCommande[]
+  procesVerbaux ProcesVerbal[]
 }
 
 model Vehicule {
@@ -31,28 +40,127 @@ model Vehicule {
   carburant       String?
   clientId        String
   client          Client   @relation(fields: [clientId], references: [id])
-  ordres          OrdreReparation[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  ordres        OrdreReparation[]
+  devis         Devis[]
+  fichesTechniques FicheTechnique[]
+  attestations  AttestationImmobilisation[]
+  procesVerbaux ProcesVerbal[]
 }
+
+model Personnel {
+  id           String    @id @default(cuid())
+  nom          String
+  prenom       String
+  poste        String
+  telephone    String?
+  email        String?
+  salaire      Float?
+  dateEmbauche DateTime?
+  actif        Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  ordres OrdreReparation[]
+}
+
+model PieceDetachee {
+  id            String   @id @default(cuid())
+  reference     String   @unique
+  nom           String
+  description   String?
+  categorie     String
+  quantiteStock Int      @default(0)
+  seuilAlerte   Int      @default(5)
+  prixAchat     Float
+  prixVente     Float
+  fournisseurId String?
+  fournisseur   Fournisseur? @relation(fields: [fournisseurId], references: [id])
+  emplacement   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  lignes     LigneOrdre[]
+  mouvements MouvementStock[]
+  lignesDevis LigneDevis[]
+  lignesBonCommande LigneBonCommande[]
+}
+
+model MouvementStock {
+  id        String        @id @default(cuid())
+  pieceId   String
+  piece     PieceDetachee @relation(fields: [pieceId], references: [id])
+  type      TypeMouvement
+  quantite  Int
+  motif     String?
+  createdAt DateTime      @default(now())
+}
+
+model Fournisseur {
+  id        String   @id @default(cuid())
+  nom       String
+  telephone String?
+  email     String?
+  adresse   String?
+  ice       String?
+  contact   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pieces       PieceDetachee[]
+  bonsCommande BonCommande[]
+}
+
+model BureauExpertise {
+  id        String   @id @default(cuid())
+  nom       String
+  telephone String?
+  email     String?
+  adresse   String?
+  contact   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  procesVerbaux ProcesVerbal[]
+}
+
+model Partenaire {
+  id        String   @id @default(cuid())
+  nom       String
+  type      String
+  telephone String?
+  email     String?
+  adresse   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── DOCUMENTS ───────────────────────────────────────────────────────────────
 
 model OrdreReparation {
   id           String      @id @default(cuid())
   numero       String      @unique
   vehiculeId   String
   vehicule     Vehicule    @relation(fields: [vehiculeId], references: [id])
+  clientId     String?
+  client       Client?     @relation(fields: [clientId], references: [id])
   statut       StatutOrdre @default(EN_ATTENTE)
-  typeService  String   @default("")
+  typeService  String      @default("")
   description  String?
   dateEntree   DateTime    @default(now())
   dateSortie   DateTime?
   kilometrage  Int?
   technicienId String?
   technicien   Personnel?  @relation(fields: [technicienId], references: [id])
-  lignes       LigneOrdre[]
-  facture      Facture?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
+
+  lignes  LigneOrdre[]
+  facture Facture?
+  devis   Devis?
 }
 
 model LigneOrdre {
@@ -67,6 +175,40 @@ model LigneOrdre {
   piece        PieceDetachee?  @relation(fields: [pieceId], references: [id])
 }
 
+model Devis {
+  id         String      @id @default(cuid())
+  numero     String      @unique
+  clientId   String
+  client     Client      @relation(fields: [clientId], references: [id])
+  vehiculeId String?
+  vehicule   Vehicule?   @relation(fields: [vehiculeId], references: [id])
+  ordreId    String?     @unique
+  ordre      OrdreReparation? @relation(fields: [ordreId], references: [id])
+  statut     StatutDevis @default(EN_ATTENTE)
+  validite   Int         @default(30)
+  montantHT  Float       @default(0)
+  tva        Float       @default(20)
+  montantTTC Float       @default(0)
+  notes      String?
+  dateEmission DateTime  @default(now())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  lignes  LigneDevis[]
+  facture Facture?
+}
+
+model LigneDevis {
+  id           String        @id @default(cuid())
+  devisId      String
+  devis        Devis         @relation(fields: [devisId], references: [id])
+  description  String
+  quantite     Float         @default(1)
+  prixUnitaire Float
+  pieceId      String?
+  piece        PieceDetachee? @relation(fields: [pieceId], references: [id])
+}
+
 model Facture {
   id           String        @id @default(cuid())
   numero       String        @unique
@@ -74,6 +216,8 @@ model Facture {
   client       Client        @relation(fields: [clientId], references: [id])
   ordreId      String?       @unique
   ordre        OrdreReparation? @relation(fields: [ordreId], references: [id])
+  devisId      String?       @unique
+  devis        Devis?        @relation(fields: [devisId], references: [id])
   statut       StatutFacture @default(EN_ATTENTE)
   montantHT    Float
   tva          Float         @default(20)
@@ -87,47 +231,111 @@ model Facture {
   updatedAt    DateTime      @updatedAt
 }
 
-model PieceDetachee {
-  id            String           @id @default(cuid())
-  reference     String           @unique
-  nom           String
-  description   String?
-  categorie     String
-  quantiteStock Int              @default(0)
-  seuilAlerte   Int              @default(5)
-  prixAchat     Float
-  prixVente     Float
-  fournisseur   String?
-  emplacement   String?
-  lignes        LigneOrdre[]
-  mouvements    MouvementStock[]
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+model BonCommande {
+  id           String      @id @default(cuid())
+  numero       String      @unique
+  fournisseurId String?
+  fournisseur  Fournisseur? @relation(fields: [fournisseurId], references: [id])
+  clientId     String?
+  client       Client?     @relation(fields: [clientId], references: [id])
+  statut       StatutBon   @default(EN_ATTENTE)
+  montantHT    Float       @default(0)
+  tva          Float       @default(20)
+  montantTTC   Float       @default(0)
+  notes        String?
+  dateEmission DateTime    @default(now())
+  dateLivraison DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  lignes LigneBonCommande[]
+  bonLivraison BonLivraison?
 }
 
-model MouvementStock {
-  id        String        @id @default(cuid())
-  pieceId   String
-  piece     PieceDetachee @relation(fields: [pieceId], references: [id])
-  type      TypeMouvement
-  quantite  Int
-  motif     String?
-  createdAt DateTime      @default(now())
+model LigneBonCommande {
+  id           String      @id @default(cuid())
+  bonId        String
+  bon          BonCommande @relation(fields: [bonId], references: [id])
+  description  String
+  quantite     Float       @default(1)
+  prixUnitaire Float
+  pieceId      String?
+  piece        PieceDetachee? @relation(fields: [pieceId], references: [id])
 }
 
-model Personnel {
-  id           String            @id @default(cuid())
-  nom          String
-  prenom       String
-  poste        String
-  telephone    String?
-  email        String?
-  salaire      Float?
-  dateEmbauche DateTime?
-  actif        Boolean           @default(true)
-  ordres       OrdreReparation[]
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+model BonLivraison {
+  id           String      @id @default(cuid())
+  numero       String      @unique
+  bonCommandeId String?    @unique
+  bonCommande  BonCommande? @relation(fields: [bonCommandeId], references: [id])
+  statut       StatutBon   @default(EN_ATTENTE)
+  adresse      String?
+  notes        String?
+  dateEmission DateTime    @default(now())
+  dateLivraison DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model FicheTechnique {
+  id          String   @id @default(cuid())
+  numero      String   @unique
+  vehiculeId  String
+  vehicule    Vehicule @relation(fields: [vehiculeId], references: [id])
+  typeControle String
+  observations String?
+  resultat    String?
+  technicien  String?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AttestationImmobilisation {
+  id          String   @id @default(cuid())
+  numero      String   @unique
+  vehiculeId  String
+  vehicule    Vehicule @relation(fields: [vehiculeId], references: [id])
+  motif       String
+  dateDebut   DateTime
+  dateFin     DateTime?
+  observations String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProcesVerbal {
+  id               String          @id @default(cuid())
+  numero           String          @unique
+  vehiculeId       String
+  vehicule         Vehicule        @relation(fields: [vehiculeId], references: [id])
+  clientId         String?
+  client           Client?         @relation(fields: [clientId], references: [id])
+  bureauExpertiseId String?
+  bureauExpertise  BureauExpertise? @relation(fields: [bureauExpertiseId], references: [id])
+  typeExpertise    String
+  description      String?
+  constatations    String?
+  conclusion       String?
+  montantExpertise Float?
+  date             DateTime        @default(now())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+// ─── FINANCE ─────────────────────────────────────────────────────────────────
+
+model JournalEntree {
+  id          String          @id @default(cuid())
+  type        TypeJournal
+  categorie   String
+  libelle     String
+  montant     Float
+  date        DateTime
+  compte      String          @default("Caisse")
+  reference   String?
+  notes       String?
+  createdAt   DateTime        @default(now())
 }
 
 model Charge {
@@ -158,6 +366,8 @@ model Livraison {
   updatedAt    DateTime        @updatedAt
 }
 
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
+
 enum StatutOrdre {
   EN_ATTENTE
   EN_COURS
@@ -171,6 +381,20 @@ enum StatutFacture {
   PARTIELLEMENT_PAYEE
   PAYEE
   ANNULEE
+}
+
+enum StatutDevis {
+  EN_ATTENTE
+  ACCEPTE
+  REFUSE
+  EXPIRE
+}
+
+enum StatutBon {
+  EN_ATTENTE
+  CONFIRME
+  LIVRE
+  ANNULE
 }
 
 enum TypeLigne {
@@ -202,4 +426,9 @@ enum StatutLivraison {
   EN_COURS
   LIVRE
   ANNULE
+}
+
+enum TypeJournal {
+  ENTREE
+  SORTIE
 }

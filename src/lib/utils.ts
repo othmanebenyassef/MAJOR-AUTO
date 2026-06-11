@@ -6,18 +6,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("fr-MA", {
-    style: "currency",
-    currency: "MAD",
-  }).format(amount);
+  return new Intl.NumberFormat("fr-MA", { style: "currency", currency: "MAD" }).format(amount);
 }
 
 export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(new Date(date));
+  return new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(date));
 }
 
 export function generateNumero(prefix: string): string {
@@ -34,36 +27,29 @@ export function parseServices(typeService: string | string[]): string[] {
 }
 
 export const SERVICES = [
-  "Carrosserie",
-  "Peinture au four",
-  "Mécanique",
-  "Diagnostic",
-  "Electricité",
-  "Climatisation",
-  "Révision",
-  "Freinage",
-  "Suspension",
-  "Echappement",
+  "Carrosserie", "Peinture au four", "Mécanique", "Diagnostic",
+  "Electricité", "Climatisation", "Révision", "Freinage",
+  "Suspension", "Echappement", "Vitrage", "Sellerie",
 ];
 
 export const STATUT_ORDRE_LABELS: Record<string, string> = {
-  EN_ATTENTE: "En attente",
-  EN_COURS: "En cours",
-  EN_PAUSE: "En pause",
-  TERMINE: "Terminé",
-  LIVRE: "Livré",
+  EN_ATTENTE: "En attente", EN_COURS: "En cours", EN_PAUSE: "En pause",
+  TERMINE: "Terminé", LIVRE: "Livré",
 };
 
 export const STATUT_FACTURE_LABELS: Record<string, string> = {
-  EN_ATTENTE: "En attente",
-  PARTIELLEMENT_PAYEE: "Partiellement payée",
-  PAYEE: "Payée",
-  ANNULEE: "Annulée",
+  EN_ATTENTE: "En attente", PARTIELLEMENT_PAYEE: "Partiellement payée",
+  PAYEE: "Payée", ANNULEE: "Annulée",
+};
+
+export const STATUT_DEVIS_LABELS: Record<string, string> = {
+  EN_ATTENTE: "En attente", ACCEPTE: "Accepté", REFUSE: "Refusé", EXPIRE: "Expiré",
+};
+
+export const STATUT_BON_LABELS: Record<string, string> = {
+  EN_ATTENTE: "En attente", CONFIRME: "Confirmé", LIVRE: "Livré", ANNULE: "Annulé",
 };
 
 export const STATUT_LIVRAISON_LABELS: Record<string, string> = {
-  EN_ATTENTE: "En attente",
-  EN_COURS: "En cours",
-  LIVRE: "Livré",
-  ANNULE: "Annulé",
+  EN_ATTENTE: "En attente", EN_COURS: "En cours", LIVRE: "Livré", ANNULE: "Annulé",
 };

@@ -1,94 +1,61 @@
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageTable } from "@/components/ui/page-table";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { TrendingDown, Plus } from "lucide-react";
-import Link from "next/link";
+import { TrendingDown } from "lucide-react";
 
-const CATEGORIE_LABELS: Record<string, string> = {
-  LOYER: "Loyer", ELECTRICITE: "Électricité", EAU: "Eau",
-  SALAIRES: "Salaires", FOURNITURES: "Fournitures", ASSURANCE: "Assurance",
-  MAINTENANCE: "Maintenance", TRANSPORT: "Transport", AUTRE: "Autre",
+const CAT_LABELS: Record<string, string> = {
+  LOYER: "Loyer", ELECTRICITE: "Électricité", EAU: "Eau", SALAIRES: "Salaires",
+  FOURNITURES: "Fournitures", ASSURANCE: "Assurance", MAINTENANCE: "Maintenance",
+  TRANSPORT: "Transport", AUTRE: "Autre",
 };
 
 export default async function ChargesPage() {
   const charges = await prisma.charge.findMany({ orderBy: { date: "desc" } });
 
+  const now = new Date();
   const totalMois = charges
-    .filter((c) => {
-      const d = new Date(c.date);
-      const now = new Date();
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    })
+    .filter(c => { const d = new Date(c.date); return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear(); })
     .reduce((s, c) => s + c.montant, 0);
 
-  const byCategorie = charges.reduce((acc, c) => {
+  const byCategorie = charges.reduce((acc: Record<string, number>, c) => {
     acc[c.categorie] = (acc[c.categorie] || 0) + c.montant;
     return acc;
-  }, {} as Record<string, number>);
+  }, {});
 
   return (
     <div className="flex flex-col flex-1">
       <Header title="Charges d'exploitation" subtitle={`Ce mois : ${formatCurrency(totalMois)}`} />
       <div className="flex-1 p-6 space-y-6">
-        <div className="flex justify-end">
-          <Link
-            href="/charges/nouvelle"
-            className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
-          >
-            <Plus className="w-4 h-4" />
-            Ajouter une charge
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Object.entries(byCategorie).map(([cat, total]) => (
-            <Card key={cat}>
-              <CardContent className="pt-4">
-                <p className="text-xs text-gray-500 font-medium">{CATEGORIE_LABELS[cat] || cat}</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">{formatCurrency(total)}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {charges.length === 0 ? (
-          <Card>
-            <CardContent className="py-16 text-center">
-              <TrendingDown className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p className="text-gray-500">Aucune charge enregistrée</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-xs text-gray-500 border-b border-gray-100 bg-gray-50">
-                    <th className="text-left px-6 py-3 font-medium">Date</th>
-                    <th className="text-left px-6 py-3 font-medium">Libellé</th>
-                    <th className="text-left px-6 py-3 font-medium">Catégorie</th>
-                    <th className="text-right px-6 py-3 font-medium">Montant</th>
-                    <th className="text-left px-6 py-3 font-medium">Récurrence</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {charges.map((c) => (
-                    <tr key={c.id} className="border-b border-gray-50 hover:bg-gray-50">
-                      <td className="px-6 py-3 text-sm text-gray-600">{formatDate(c.date)}</td>
-                      <td className="px-6 py-3 text-sm font-medium">{c.libelle}</td>
-                      <td className="px-6 py-3 text-sm text-gray-600">{CATEGORIE_LABELS[c.categorie] || c.categorie}</td>
-                      <td className="px-6 py-3 text-sm font-bold text-right text-red-600">{formatCurrency(c.montant)}</td>
-                      <td className="px-6 py-3 text-sm text-gray-500">
-                        {c.recurrente ? `Récurrente (${c.periodicite})` : "Ponctuelle"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+        {Object.keys(byCategorie).length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {Object.entries(byCategorie).map(([cat, total]) => (
+              <Card key={cat}>
+                <CardContent className="pt-4 pb-4">
+                  <p className="text-xs text-[#9ca3af] font-medium uppercase tracking-wide">{CAT_LABELS[cat] || cat}</p>
+                  <p className="text-lg font-bold text-[#f43f5e] mt-1">{formatCurrency(total)}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
+
+        <PageTable
+          rows={charges}
+          getKey={(c) => c.id}
+          addHref="/charges/nouvelle"
+          addLabel="Ajouter une charge"
+          emptyIcon={<TrendingDown className="w-6 h-6 text-[#9ca3af]" />}
+          emptyText="Aucune charge enregistrée"
+          columns={[
+            { key: "date", label: "Date", render: (c) => <span className="text-[#6b7280]">{formatDate(c.date)}</span> },
+            { key: "libelle", label: "Libellé", render: (c) => <span className="font-medium text-[#1e2433]">{c.libelle}</span> },
+            { key: "categorie", label: "Catégorie", render: (c) => <span className="text-xs bg-[#f5f3ff] text-[#7c3aed] px-2.5 py-1 rounded-full font-medium">{CAT_LABELS[c.categorie] || c.categorie}</span> },
+            { key: "montant", label: "Montant", className: "text-right", render: (c) => <span className="font-bold text-[#f43f5e]">{formatCurrency(c.montant)}</span> },
+            { key: "recurrence", label: "Récurrence", render: (c) => <span className="text-[#9ca3af] text-xs">{c.recurrente ? `Récurrente (${c.periodicite})` : "Ponctuelle"}</span> },
+          ]}
+        />
       </div>
     </div>
   );
