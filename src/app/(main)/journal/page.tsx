@@ -7,23 +7,28 @@ import { PageTable } from "@/components/ui/page-table";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DateInput } from "@/components/ui/date-input";
-import { BookOpen, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
+import { DateSelect } from "@/components/ui/date-select";
+import { BookOpen, ArrowUpCircle, ArrowDownCircle, Plus, Trash2 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 type Entree = { id: string; type: "ENTREE" | "SORTIE"; categorie: string; libelle: string; montant: number; date: string; compte: string; reference: string | null };
+type Ligne = { id: number; type: "ENTREE" | "SORTIE"; categorie: string; libelle: string; montant: string; date: string; compte: string; reference: string };
 
 const CATEGORIES_ENTREE = ["Règlement facture", "Acompte client", "Vente pièce", "Autre recette"];
 const CATEGORIES_SORTIE = ["Achat pièces", "Salaire", "Loyer", "Facture fournisseur", "Carburant", "Autre dépense"];
 const COMPTES = ["Caisse", "Banque CIH", "Banque Attijariwafa", "Banque BMCE", "Banque Populaire"];
-const emptyForm = { categorie: "", libelle: "", montant: "", date: new Date().toISOString().split("T")[0], compte: "Caisse", reference: "", notes: "" };
+
+const newLigne = (id: number): Ligne => ({
+  id, type: "ENTREE", categorie: "", libelle: "", montant: "",
+  date: new Date().toISOString().split("T")[0], compte: "Caisse", reference: "",
+});
 
 export default function JournalPage() {
   const [entrees, setEntrees] = useState<Entree[]>([]);
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState<"ENTREE" | "SORTIE">("ENTREE");
-  const [form, setForm] = useState(emptyForm);
+  const [lignes, setLignes] = useState<Ligne[]>([newLigne(1)]);
+  const [nextId, setNextId] = useState(2);
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
@@ -34,21 +39,45 @@ export default function JournalPage() {
   const totalEntrees = entrees.filter(e => e.type === "ENTREE").reduce((s, e) => s + e.montant, 0);
   const totalSorties = entrees.filter(e => e.type === "SORTIE").reduce((s, e) => s + e.montant, 0);
   const solde = totalEntrees - totalSorties;
-  const cats = type === "ENTREE" ? CATEGORIES_ENTREE : CATEGORIES_SORTIE;
+
+  function addLigne() {
+    setLignes(prev => [...prev, newLigne(nextId)]);
+    setNextId(n => n + 1);
+  }
+
+  function removeLigne(id: number) {
+    if (lignes.length === 1) return;
+    setLignes(prev => prev.filter(l => l.id !== id));
+  }
+
+  function updateLigne(id: number, field: keyof Ligne, value: string) {
+    setLignes(prev => prev.map(l => l.id === id ? { ...l, [field]: value } : l));
+  }
+
+  function resetModal() {
+    setLignes([newLigne(1)]);
+    setNextId(2);
+    setOpen(false);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("/api/journal", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, type, montant: parseFloat(form.montant), date: new Date(form.date) }),
-      });
-      if (res.ok) { setOpen(false); setForm(emptyForm); load(); }
+      await Promise.all(
+        lignes.map(l =>
+          fetch("/api/journal", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...l, montant: parseFloat(l.montant), date: new Date(l.date) }),
+          })
+        )
+      );
+      resetModal();
+      load();
     } finally { setLoading(false); }
   }
 
-  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });
+  const selectCls = "px-2 py-2 bg-[#f8f9fc] border border-[#e8eaf0] rounded-lg text-sm text-[#1e2433] focus:outline-none focus:ring-2 focus:ring-[#c7d7fd]";
 
   return (
     <div className="flex flex-col flex-1">
@@ -95,40 +124,64 @@ export default function JournalPage() {
         />
       </div>
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Nouvelle opération">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="text-xs font-medium text-[#6b7280] uppercase tracking-wide block mb-2">Type d'opération</label>
-            <div className="flex gap-2">
-              {(["ENTREE", "SORTIE"] as const).map(t => (
-                <button key={t} type="button" onClick={() => setType(t)} className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition ${type === t ? (t === "ENTREE" ? "bg-[#edfaf4] text-[#10b981] border-2 border-[#a7f0c8]" : "bg-[#fff1f3] text-[#f43f5e] border-2 border-[#fda4b0]") : "bg-[#f8f9fc] text-[#9ca3af] border-2 border-transparent"}`}>
-                  {t === "ENTREE" ? "↑ Entrée" : "↓ Sortie"}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="text-xs font-medium text-[#6b7280] uppercase tracking-wide block mb-1">Catégorie</label>
-            <select value={form.categorie} onChange={set("categorie")} required className="w-full px-3 py-2.5 bg-[#f8f9fc] border border-[#e8eaf0] rounded-xl text-sm text-[#1e2433] focus:outline-none focus:ring-2 focus:ring-[#c7d7fd]">
-              <option value="">Sélectionner…</option>
-              {cats.map(c => <option key={c}>{c}</option>)}
-            </select>
-          </div>
-          <Input label="Libellé *" required value={form.libelle} onChange={set("libelle")} placeholder="Description de l'opération" />
-          <div className="grid grid-cols-2 gap-4">
-            <Input label="Montant (MAD) *" required type="number" step="0.01" value={form.montant} onChange={set("montant")} />
-            <DateInput label="Date *" required value={form.date} onChange={set("date")} />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-[#6b7280] uppercase tracking-wide block mb-1">Compte</label>
-            <select value={form.compte} onChange={set("compte")} className="w-full px-3 py-2.5 bg-[#f8f9fc] border border-[#e8eaf0] rounded-xl text-sm text-[#1e2433] focus:outline-none focus:ring-2 focus:ring-[#c7d7fd]">
-              {COMPTES.map(c => <option key={c}>{c}</option>)}
-            </select>
-          </div>
-          <Input label="Référence (facture, bon…)" value={form.reference} onChange={set("reference")} placeholder="ex: FAC-202506-1234" />
-          <div className="flex gap-3 pt-2">
-            <Button type="submit" disabled={loading}>{loading ? "Enregistrement…" : "Enregistrer"}</Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Annuler</Button>
+      <Modal open={open} onClose={resetModal} title="Nouvelles opérations">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {lignes.map((l, idx) => {
+            const cats = l.type === "ENTREE" ? CATEGORIES_ENTREE : CATEGORIES_SORTIE;
+            return (
+              <div key={l.id} className="relative bg-[#f8f9fc] border border-[#e8eaf0] rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Ligne {idx + 1}</span>
+                  {lignes.length > 1 && (
+                    <button type="button" onClick={() => removeLigne(l.id)} className="p-1 hover:bg-[#fff1f3] rounded-lg transition-colors group">
+                      <Trash2 className="w-4 h-4 text-[#9ca3af] group-hover:text-[#f43f5e]" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Type toggle */}
+                <div className="flex gap-2">
+                  {(["ENTREE", "SORTIE"] as const).map(t => (
+                    <button key={t} type="button" onClick={() => updateLigne(l.id, "type", t)}
+                      className={`flex-1 py-2 rounded-lg text-xs font-medium transition ${l.type === t ? (t === "ENTREE" ? "bg-[#edfaf4] text-[#10b981] border border-[#a7f0c8]" : "bg-[#fff1f3] text-[#f43f5e] border border-[#fda4b0]") : "bg-white text-[#9ca3af] border border-[#e8eaf0]"}`}>
+                      {t === "ENTREE" ? "↑ Entrée" : "↓ Sortie"}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <select value={l.categorie} onChange={e => updateLigne(l.id, "categorie", e.target.value)} required className={selectCls}>
+                    <option value="">Catégorie…</option>
+                    {cats.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                  <select value={l.compte} onChange={e => updateLigne(l.id, "compte", e.target.value)} className={selectCls}>
+                    {COMPTES.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+
+                <Input placeholder="Libellé *" required value={l.libelle} onChange={e => updateLigne(l.id, "libelle", e.target.value)} />
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Input placeholder="Montant (MAD) *" required type="number" step="0.01" value={l.montant} onChange={e => updateLigne(l.id, "montant", e.target.value)} />
+                  <Input placeholder="Référence" value={l.reference} onChange={e => updateLigne(l.id, "reference", e.target.value)} />
+                </div>
+
+                <DateSelect label="Date *" required value={l.date} onChange={val => updateLigne(l.id, "date", val)} />
+              </div>
+            );
+          })}
+
+          {/* Bouton ajouter une ligne */}
+          <button type="button" onClick={addLigne}
+            className="w-full py-2.5 rounded-xl border-2 border-dashed border-[#c7d7fd] bg-[#eef3ff] text-[#3b82f6] text-sm font-medium hover:bg-[#dbeafe] transition flex items-center justify-center gap-2">
+            <Plus className="w-4 h-4" /> Ajouter une ligne
+          </button>
+
+          <div className="flex gap-3 pt-1">
+            <Button type="submit" disabled={loading}>
+              {loading ? "Enregistrement…" : `Enregistrer ${lignes.length > 1 ? `(${lignes.length} lignes)` : ""}`}
+            </Button>
+            <Button type="button" variant="outline" onClick={resetModal}>Annuler</Button>
           </div>
         </form>
       </Modal>

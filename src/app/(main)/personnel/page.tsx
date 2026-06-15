@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DateInput } from "@/components/ui/date-input";
+import { DateSelect } from "@/components/ui/date-select";
 import { UserCog, Plus, Phone, Mail } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -102,7 +102,7 @@ export default function PersonnelPage() {
           <Input label="Email" type="email" value={form.email} onChange={set("email")} />
           <div className="grid grid-cols-2 gap-4">
             <Input label="Salaire mensuel (MAD)" type="number" step="0.01" value={form.salaire} onChange={set("salaire")} />
-            <DateInput label="Date d'embauche" value={form.dateEmbauche} onChange={set("dateEmbauche")} />
+            <DateSelect label="Date d'embauche" value={form.dateEmbauche} onChange={val => setForm({ ...form, dateEmbauche: val })} />
           </div>
           <div className="flex gap-3 pt-2">
             <Button type="submit" disabled={loading}>{loading ? "Enregistrement..." : "Enregistrer"}</Button>

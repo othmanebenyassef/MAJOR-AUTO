@@ -6,7 +6,7 @@ import { PageTable } from "@/components/ui/page-table";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DateInput } from "@/components/ui/date-input";
+import { DateSelect } from "@/components/ui/date-select";
 import { TrendingDown } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -85,7 +85,7 @@ export default function ChargesPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Input label="Montant (MAD) *" required type="number" step="0.01" value={form.montant} onChange={e => setForm({ ...form, montant: e.target.value })} />
-            <DateInput label="Date *" required value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+            <DateSelect label="Date *" required value={form.date} onChange={val => setForm({ ...form, date: val })} />
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="recurrente" checked={form.recurrente} onChange={e => setForm({ ...form, recurrente: e.target.checked })} className="w-4 h-4" />
