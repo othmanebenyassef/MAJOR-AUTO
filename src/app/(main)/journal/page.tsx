@@ -62,7 +62,7 @@ export default function JournalPage() {
     setLoading(true);
     try {
       await Promise.all(
-        lignes.map(l =>
+        lignes.map(({ id: _id, ...l }) =>
           fetch("/api/journal", {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...l, montant: parseFloat(l.montant), date: new Date(l.date) }),
@@ -119,7 +119,7 @@ export default function JournalPage() {
         />
       </div>
 
-      <Modal open={open} onClose={resetModal} title="Nouvelle saisie — Journal">
+      <Modal open={open} onClose={resetModal} title="Nouvelle saisie — Journal" wide>
         <form onSubmit={handleSubmit}>
           {/* Info */}
           <p className="text-xs text-[#6b7280] bg-[#f8f9fc] border border-[#e8eaf0] rounded-lg px-3 py-2 mb-4">
