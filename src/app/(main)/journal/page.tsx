@@ -7,7 +7,6 @@ import { PageTable } from "@/components/ui/page-table";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DateSelect } from "@/components/ui/date-select";
 import { BookOpen, ArrowUpCircle, ArrowDownCircle, Plus, Trash2 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -15,9 +14,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 type Entree = { id: string; type: "ENTREE" | "SORTIE"; categorie: string; libelle: string; montant: number; date: string; compte: string; reference: string | null };
 type Ligne = { id: number; type: "ENTREE" | "SORTIE"; categorie: string; libelle: string; montant: string; date: string; compte: string; reference: string };
 
-const CATEGORIES_ENTREE = ["Règlement facture", "Acompte client", "Vente pièce", "Autre recette"];
-const CATEGORIES_SORTIE = ["Achat pièces", "Salaire", "Loyer", "Facture fournisseur", "Carburant", "Autre dépense"];
-const COMPTES = ["Caisse", "Banque CIH", "Banque Attijariwafa", "Banque BMCE", "Banque Populaire"];
+const COMPTES = ["Espèces", "Chèque", "Virement", "CB", "Caisse", "Banque CIH", "Banque Attijariwafa", "Banque BMCE", "Banque Populaire"];
 
 const newLigne = (id: number): Ligne => ({
   id, type: "ENTREE", categorie: "", libelle: "", montant: "",
@@ -77,8 +74,6 @@ export default function JournalPage() {
     } finally { setLoading(false); }
   }
 
-  const selectCls = "px-2 py-2 bg-[#f8f9fc] border border-[#e8eaf0] rounded-lg text-sm text-[#1e2433] focus:outline-none focus:ring-2 focus:ring-[#c7d7fd]";
-
   return (
     <div className="flex flex-col flex-1">
       <Header title="Journal" subtitle="Entrées et sorties de caisses et banques" />
@@ -124,64 +119,152 @@ export default function JournalPage() {
         />
       </div>
 
-      <Modal open={open} onClose={resetModal} title="Nouvelles opérations">
-        <form onSubmit={handleSubmit} className="space-y-3">
-          {lignes.map((l, idx) => {
-            const cats = l.type === "ENTREE" ? CATEGORIES_ENTREE : CATEGORIES_SORTIE;
-            return (
-              <div key={l.id} className="relative bg-[#f8f9fc] border border-[#e8eaf0] rounded-xl p-4 space-y-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Ligne {idx + 1}</span>
-                  {lignes.length > 1 && (
-                    <button type="button" onClick={() => removeLigne(l.id)} className="p-1 hover:bg-[#fff1f3] rounded-lg transition-colors group">
-                      <Trash2 className="w-4 h-4 text-[#9ca3af] group-hover:text-[#f43f5e]" />
-                    </button>
-                  )}
-                </div>
+      <Modal open={open} onClose={resetModal} title="Nouvelle saisie — Journal">
+        <form onSubmit={handleSubmit}>
+          {/* Info */}
+          <p className="text-xs text-[#6b7280] bg-[#f8f9fc] border border-[#e8eaf0] rounded-lg px-3 py-2 mb-4">
+            Remplissez une ou plusieurs lignes, puis cliquez sur « Valider ». Les champs obligatoires : Désignation et Montant.
+          </p>
 
-                {/* Type toggle */}
-                <div className="flex gap-2">
-                  {(["ENTREE", "SORTIE"] as const).map(t => (
-                    <button key={t} type="button" onClick={() => updateLigne(l.id, "type", t)}
-                      className={`flex-1 py-2 rounded-lg text-xs font-medium transition ${l.type === t ? (t === "ENTREE" ? "bg-[#edfaf4] text-[#10b981] border border-[#a7f0c8]" : "bg-[#fff1f3] text-[#f43f5e] border border-[#fda4b0]") : "bg-white text-[#9ca3af] border border-[#e8eaf0]"}`}>
-                      {t === "ENTREE" ? "↑ Entrée" : "↓ Sortie"}
-                    </button>
-                  ))}
-                </div>
+          {/* Table */}
+          <div className="overflow-x-auto rounded-xl border border-[#e8eaf0]">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-[#f8f9fc] border-b border-[#e8eaf0]">
+                  <th className="px-2 py-2 text-xs font-semibold text-[#9ca3af] uppercase tracking-wide w-8">#</th>
+                  <th className="px-2 py-2 text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Date</th>
+                  <th className="px-2 py-2 text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Type</th>
+                  <th className="px-2 py-2 text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Désignation</th>
+                  <th className="px-2 py-2 text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Cat.</th>
+                  <th className="px-2 py-2 text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Tiers</th>
+                  <th className="px-2 py-2 text-xs font-semibold text-[#9ca3af] uppercase tracking-wide">Mode</th>
+                  <th className="px-2 py-2 text-xs font-semibold text-[#9ca3af] uppercase tracking-wide text-right">Montant</th>
+                  <th className="w-8" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#f0f2f7]">
+                {lignes.map((l, idx) => (
+                  <tr key={l.id} className="hover:bg-[#f8f9fc]">
+                    {/* # */}
+                    <td className="px-2 py-2 text-center text-xs text-[#9ca3af] font-medium">{idx + 1}</td>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <select value={l.categorie} onChange={e => updateLigne(l.id, "categorie", e.target.value)} required className={selectCls}>
-                    <option value="">Catégorie…</option>
-                    {cats.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                  <select value={l.compte} onChange={e => updateLigne(l.id, "compte", e.target.value)} className={selectCls}>
-                    {COMPTES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </div>
+                    {/* Date */}
+                    <td className="px-1 py-1">
+                      <input
+                        type="date"
+                        value={l.date}
+                        onChange={e => updateLigne(l.id, "date", e.target.value)}
+                        required
+                        className="w-36 px-2 py-1.5 bg-white border border-[#e8eaf0] rounded-lg text-sm text-[#1e2433] focus:outline-none focus:ring-2 focus:ring-[#c7d7fd] focus:border-[#3b82f6]"
+                      />
+                    </td>
 
-                <Input placeholder="Libellé *" required value={l.libelle} onChange={e => updateLigne(l.id, "libelle", e.target.value)} />
+                    {/* Type */}
+                    <td className="px-1 py-1">
+                      <select
+                        value={l.type}
+                        onChange={e => updateLigne(l.id, "type", e.target.value)}
+                        className="px-2 py-1.5 bg-white border border-[#e8eaf0] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#c7d7fd]"
+                      >
+                        <option value="ENTREE">Entrée</option>
+                        <option value="SORTIE">Sortie</option>
+                      </select>
+                    </td>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <Input placeholder="Montant (MAD) *" required type="number" step="0.01" value={l.montant} onChange={e => updateLigne(l.id, "montant", e.target.value)} />
-                  <Input placeholder="Référence" value={l.reference} onChange={e => updateLigne(l.id, "reference", e.target.value)} />
-                </div>
+                    {/* Désignation */}
+                    <td className="px-1 py-1">
+                      <input
+                        required
+                        placeholder="Désignation *"
+                        value={l.libelle}
+                        onChange={e => updateLigne(l.id, "libelle", e.target.value)}
+                        className="w-44 px-2 py-1.5 bg-white border border-[#e8eaf0] rounded-lg text-sm text-[#1e2433] placeholder:text-[#c4c9d4] focus:outline-none focus:ring-2 focus:ring-[#c7d7fd] focus:border-[#3b82f6]"
+                      />
+                    </td>
 
-                <DateSelect label="Date *" required value={l.date} onChange={val => updateLigne(l.id, "date", val)} />
-              </div>
-            );
-          })}
+                    {/* Catégorie */}
+                    <td className="px-1 py-1">
+                      <select
+                        value={l.categorie}
+                        onChange={e => updateLigne(l.id, "categorie", e.target.value)}
+                        className="px-2 py-1.5 bg-white border border-[#e8eaf0] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#c7d7fd]"
+                      >
+                        <option value="Client">Client</option>
+                        <option value="Personnel">Personnel</option>
+                        <option value="Fournisseur">Fournisseur</option>
+                        <option value="Autre">Autre</option>
+                      </select>
+                    </td>
 
-          {/* Bouton ajouter une ligne */}
-          <button type="button" onClick={addLigne}
-            className="w-full py-2.5 rounded-xl border-2 border-dashed border-[#c7d7fd] bg-[#eef3ff] text-[#3b82f6] text-sm font-medium hover:bg-[#dbeafe] transition flex items-center justify-center gap-2">
-            <Plus className="w-4 h-4" /> Ajouter une ligne
-          </button>
+                    {/* Tiers */}
+                    <td className="px-1 py-1">
+                      <input
+                        placeholder="Libre"
+                        value={l.reference}
+                        onChange={e => updateLigne(l.id, "reference", e.target.value)}
+                        className="w-32 px-2 py-1.5 bg-white border border-[#e8eaf0] rounded-lg text-sm text-[#1e2433] placeholder:text-[#c4c9d4] focus:outline-none focus:ring-2 focus:ring-[#c7d7fd]"
+                      />
+                    </td>
 
-          <div className="flex gap-3 pt-1">
-            <Button type="submit" disabled={loading}>
-              {loading ? "Enregistrement…" : `Enregistrer ${lignes.length > 1 ? `(${lignes.length} lignes)` : ""}`}
-            </Button>
-            <Button type="button" variant="outline" onClick={resetModal}>Annuler</Button>
+                    {/* Mode */}
+                    <td className="px-1 py-1">
+                      <select
+                        value={l.compte}
+                        onChange={e => updateLigne(l.id, "compte", e.target.value)}
+                        className="px-2 py-1.5 bg-white border border-[#e8eaf0] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#c7d7fd]"
+                      >
+                        <option>Espèces</option>
+                        <option>Chèque</option>
+                        <option>Virement</option>
+                        <option>CB</option>
+                        <option>Caisse</option>
+                        <option>Banque CIH</option>
+                        <option>Banque Attijariwafa</option>
+                        <option>Banque BMCE</option>
+                        <option>Banque Populaire</option>
+                      </select>
+                    </td>
+
+                    {/* Montant */}
+                    <td className="px-1 py-1">
+                      <input
+                        required
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="0,00 *"
+                        value={l.montant}
+                        onChange={e => updateLigne(l.id, "montant", e.target.value)}
+                        className="w-24 px-2 py-1.5 bg-white border border-[#e8eaf0] rounded-lg text-sm text-right text-[#1e2433] placeholder:text-[#c4c9d4] focus:outline-none focus:ring-2 focus:ring-[#c7d7fd] focus:border-[#3b82f6]"
+                      />
+                    </td>
+
+                    {/* Supprimer */}
+                    <td className="px-1 py-1 text-center">
+                      {lignes.length > 1 && (
+                        <button type="button" onClick={() => removeLigne(l.id)} className="p-1 hover:bg-[#fff1f3] rounded-lg group transition-colors">
+                          <Trash2 className="w-3.5 h-3.5 text-[#c4c9d4] group-hover:text-[#f43f5e]" />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center justify-between mt-4">
+            <button type="button" onClick={addLigne}
+              className="flex items-center gap-1.5 text-sm text-[#3b82f6] hover:text-[#2563eb] font-medium transition-colors">
+              <Plus className="w-4 h-4" /> Ajouter une ligne
+            </button>
+            <div className="flex gap-3">
+              <Button type="button" variant="outline" onClick={resetModal}>Annuler</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Enregistrement…" : `Valider ${lignes.length} ligne${lignes.length > 1 ? "s" : ""}`}
+              </Button>
+            </div>
           </div>
         </form>
       </Modal>
