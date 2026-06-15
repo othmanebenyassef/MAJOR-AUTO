@@ -15,23 +15,34 @@ interface PageTableProps<T> {
   columns: Column<T>[];
   addHref?: string;
   addLabel?: string;
+  onAdd?: () => void;
   emptyIcon?: React.ReactNode;
   emptyText?: string;
   getKey: (row: T) => string;
 }
 
-export function PageTable<T>({ rows, columns, addHref, addLabel, emptyIcon, emptyText, getKey }: PageTableProps<T>) {
+export function PageTable<T>({ rows, columns, addHref, addLabel, onAdd, emptyIcon, emptyText, getKey }: PageTableProps<T>) {
   return (
     <>
-      {addHref && (
+      {(addHref || onAdd) && (
         <div className="flex justify-end mb-5">
-          <Link
-            href={addHref}
-            className="inline-flex items-center gap-2 bg-[#3b82f6] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#2563eb] shadow-sm shadow-blue-100 transition"
-          >
-            <Plus className="w-4 h-4" />
-            {addLabel ?? "Nouveau"}
-          </Link>
+          {onAdd ? (
+            <button
+              onClick={onAdd}
+              className="inline-flex items-center gap-2 bg-[#3b82f6] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#2563eb] shadow-sm shadow-blue-100 transition"
+            >
+              <Plus className="w-4 h-4" />
+              {addLabel ?? "Nouveau"}
+            </button>
+          ) : (
+            <Link
+              href={addHref!}
+              className="inline-flex items-center gap-2 bg-[#3b82f6] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#2563eb] shadow-sm shadow-blue-100 transition"
+            >
+              <Plus className="w-4 h-4" />
+              {addLabel ?? "Nouveau"}
+            </Link>
+          )}
         </div>
       )}
 
