@@ -7,7 +7,22 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const entree = await prisma.journalEntree.create({ data: body });
-  return NextResponse.json(entree, { status: 201 });
+  try {
+    const { type, categorie, libelle, montant, date, compte, reference, notes } = await req.json();
+    const entree = await prisma.journalEntree.create({
+      data: {
+        type,
+        categorie: categorie || "Autre",
+        libelle,
+        montant: Number(montant),
+        date: new Date(date),
+        compte: compte || "Caisse",
+        reference: reference || null,
+        notes: notes || null,
+      },
+    });
+    return NextResponse.json(entree, { status: 201 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 400 });
+  }
 }

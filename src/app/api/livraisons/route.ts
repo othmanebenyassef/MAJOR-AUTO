@@ -8,9 +8,18 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const livraison = await prisma.livraison.create({
-    data: { ...body, numero: generateNumero("LIV") },
-  });
-  return NextResponse.json(livraison, { status: 201 });
+  try {
+    const { clientNom, clientTel, adresse, vehiculeInfo, datePrevu, notes } = await req.json();
+    const livraison = await prisma.livraison.create({
+      data: {
+        numero: generateNumero("LIV"),
+        clientNom, clientTel, adresse, vehiculeInfo,
+        datePrevu: new Date(datePrevu),
+        notes: notes || null,
+      },
+    });
+    return NextResponse.json(livraison, { status: 201 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 400 });
+  }
 }

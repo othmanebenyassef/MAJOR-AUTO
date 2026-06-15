@@ -7,7 +7,21 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const charge = await prisma.charge.create({ data: body });
-  return NextResponse.json(charge, { status: 201 });
+  try {
+    const { libelle, categorie, montant, date, recurrente, periodicite, notes } = await req.json();
+    const charge = await prisma.charge.create({
+      data: {
+        libelle,
+        categorie,
+        montant: Number(montant),
+        date: new Date(date),
+        recurrente: Boolean(recurrente),
+        periodicite: recurrente ? (periodicite || null) : null,
+        notes: notes || null,
+      },
+    });
+    return NextResponse.json(charge, { status: 201 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 400 });
+  }
 }

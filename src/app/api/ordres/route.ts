@@ -11,16 +11,20 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { vehiculeId, technicienId, description, kilometrage, services } = await req.json();
-  const ordre = await prisma.ordreReparation.create({
-    data: {
-      numero: generateNumero("OR"),
-      vehiculeId,
-      technicienId: technicienId || null,
-      description,
-      kilometrage,
-      typeService: JSON.stringify(services),
-    },
-  });
-  return NextResponse.json(ordre, { status: 201 });
+  try {
+    const { vehiculeId, technicienId, description, kilometrage, services } = await req.json();
+    const ordre = await prisma.ordreReparation.create({
+      data: {
+        numero: generateNumero("OR"),
+        vehiculeId,
+        technicienId: technicienId || null,
+        description: description || null,
+        kilometrage: kilometrage ? Number(kilometrage) : null,
+        typeService: services ? JSON.stringify(services) : "",
+      },
+    });
+    return NextResponse.json(ordre, { status: 201 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 400 });
+  }
 }

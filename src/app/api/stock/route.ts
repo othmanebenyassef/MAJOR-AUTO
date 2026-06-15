@@ -2,12 +2,21 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const pieces = await prisma.pieceDetachee.findMany({ orderBy: { nom: "asc" } });
+  const pieces = await prisma.pieceDetachee.findMany({
+    orderBy: { nom: "asc" },
+    include: { fournisseur: true },
+  });
   return NextResponse.json(pieces);
 }
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const piece = await prisma.pieceDetachee.create({ data: body });
-  return NextResponse.json(piece, { status: 201 });
+  try {
+    const { reference, nom, description, categorie, quantiteStock, seuilAlerte, prixAchat, prixVente, emplacement } = await req.json();
+    const piece = await prisma.pieceDetachee.create({
+      data: { reference, nom, description: description || null, categorie, quantiteStock: Number(quantiteStock) || 0, seuilAlerte: Number(seuilAlerte) || 5, prixAchat: Number(prixAchat), prixVente: Number(prixVente), emplacement: emplacement || null },
+    });
+    return NextResponse.json(piece, { status: 201 });
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 400 });
+  }
 }
