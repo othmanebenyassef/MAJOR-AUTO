@@ -26,12 +26,12 @@ export default function OrdresPage() {
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
-    fetch("/api/ordres").then(r => r.json()).then(setOrdres), []);
+    fetch("/api/ordres", { cache: "no-store" }).then(r => r.json()).then(setOrdres), []);
 
   useEffect(() => {
     load();
-    fetch("/api/vehicules").then(r => r.json()).then(setVehicules);
-    fetch("/api/personnel").then(r => r.json()).then(setTechniciens);
+    fetch("/api/vehicules", { cache: "no-store" }).then(r => r.json()).then(setVehicules);
+    fetch("/api/personnel", { cache: "no-store" }).then(r => r.json()).then(setTechniciens);
   }, [load]);
 
   function toggleService(s: string) {

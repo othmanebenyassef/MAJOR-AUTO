@@ -29,7 +29,7 @@ export default function JournalPage() {
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
-    fetch("/api/journal").then(r => r.json()).then(setEntrees), []);
+    fetch("/api/journal", { cache: "no-store" }).then(r => r.json()).then(setEntrees).catch(console.error), []);
 
   useEffect(() => { load(); }, [load]);
 
@@ -61,16 +61,15 @@ export default function JournalPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await Promise.all(
+      const results = await Promise.all(
         lignes.map(({ id: _id, ...l }) =>
           fetch("/api/journal", {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...l, montant: parseFloat(l.montant), date: new Date(l.date) }),
-          })
+            body: JSON.stringify({ ...l, montant: parseFloat(l.montant), date: l.date }),
+          }).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
         )
       );
-      resetModal();
-      load();
+      if (results.length > 0) { resetModal(); await load(); }
     } finally { setLoading(false); }
   }
 

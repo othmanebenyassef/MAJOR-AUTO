@@ -20,7 +20,7 @@ export default function ClientsPage() {
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
-    fetch("/api/clients").then(r => r.json()).then(setClients), []);
+    fetch("/api/clients", { cache: "no-store" }).then(r => r.json()).then(setClients), []);
 
   useEffect(() => { load(); }, [load]);
 

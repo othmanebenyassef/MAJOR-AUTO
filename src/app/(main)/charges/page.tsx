@@ -24,7 +24,7 @@ export default function ChargesPage() {
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
-    fetch("/api/charges").then(r => r.json()).then(setCharges), []);
+    fetch("/api/charges", { cache: "no-store" }).then(r => r.json()).then(setCharges), []);
 
   useEffect(() => { load(); }, [load]);
 

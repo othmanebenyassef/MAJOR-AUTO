@@ -22,7 +22,7 @@ export default function LivraisonsPage() {
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
-    fetch("/api/livraisons").then(r => r.json()).then(setLivraisons), []);
+    fetch("/api/livraisons", { cache: "no-store" }).then(r => r.json()).then(setLivraisons), []);
 
   useEffect(() => { load(); }, [load]);
 

@@ -21,11 +21,11 @@ export default function VehiculesPage() {
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
-    fetch("/api/vehicules").then(r => r.json()).then(setVehicules), []);
+    fetch("/api/vehicules", { cache: "no-store" }).then(r => r.json()).then(setVehicules), []);
 
   useEffect(() => {
     load();
-    fetch("/api/clients").then(r => r.json()).then(setClients);
+    fetch("/api/clients", { cache: "no-store" }).then(r => r.json()).then(setClients);
   }, [load]);
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [k]: e.target.value });

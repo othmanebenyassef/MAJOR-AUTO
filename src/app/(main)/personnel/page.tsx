@@ -23,7 +23,7 @@ export default function PersonnelPage() {
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
-    fetch("/api/personnel").then(r => r.json()).then(setPersonnel), []);
+    fetch("/api/personnel", { cache: "no-store" }).then(r => r.json()).then(setPersonnel), []);
 
   useEffect(() => { load(); }, [load]);
 

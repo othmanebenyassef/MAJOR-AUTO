@@ -22,7 +22,7 @@ export default function StockPage() {
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(() =>
-    fetch("/api/stock").then(r => r.json()).then(setPieces), []);
+    fetch("/api/stock", { cache: "no-store" }).then(r => r.json()).then(setPieces), []);
 
   useEffect(() => { load(); }, [load]);
 
