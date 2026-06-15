@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function NouveauVehiculePage() {
+function NouveauVehiculeForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -101,5 +101,13 @@ export default function NouveauVehiculePage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function NouveauVehiculePage() {
+  return (
+    <Suspense>
+      <NouveauVehiculeForm />
+    </Suspense>
   );
 }

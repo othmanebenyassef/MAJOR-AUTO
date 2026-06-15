@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { SERVICES } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function NouvelOrdrePage() {
+function NouvelOrdreForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -140,5 +140,13 @@ export default function NouvelOrdrePage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function NouvelOrdrePage() {
+  return (
+    <Suspense>
+      <NouvelOrdreForm />
+    </Suspense>
   );
 }
