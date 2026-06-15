@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -78,7 +79,7 @@ export default function NouvelleOperationPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <Input label="Montant (MAD) *" required type="number" step="0.01" value={form.montant} onChange={set("montant")} />
-                <Input label="Date *" required type="date" value={form.date} onChange={set("date")} />
+                <DateInput label="Date *" required value={form.date} onChange={set("date")} />
               </div>
 
               <div>
